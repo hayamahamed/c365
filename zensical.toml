@@ -6,9 +6,9 @@ site_name = "C365"
 
 # copyright = "Copyright &copy; 2026 Your name"
 
-repo_url = "https://github.com/hayamahamed/resources"
-repo_name = "hayamahamed/resources"
-edit_uri = "https://github.com/edit/main/docs/"
+repo_url = "https://github.com/hayamahamed/c365"
+repo_name = "hayamahamed/c365"
+edit_uri = "https://github.com/hayamahamed/c365/main/docs/"
 nav = [
   { "Get started" = "index.md" },
   { "Containers" = "containers.md" },
