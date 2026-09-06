@@ -74,6 +74,18 @@ In F2 above, the sandboxed container environment can be seen as the last third b
 | user_ns              | The User Namespace (user_ns) the sandboxed environments to have its own set of user and group IDs that will map to unique user and group IDs back on the host system.                                                                     |
 | seccomp              | seccomp is a utility acts as a filter for kernel calls. This allows us to drop Kernel capabilities in the sandboxed environment. Utilizing seccomp is also not strictly vital to containers.                                              |
 
+## Containers, images, and registries
+
+!!! info
+
+    The Open Container Initiative (OCI) is an open governance structure for the express purpose of creating open industry standards around container formats and runtimes.
+
+An OCI image, commonly called an image or a container image, is a read-only template with instructions for creating a Docker container. Often, an image is based on another image, with some additional customization.
+
+A container is a runnable instance of an image. You can create, start, stop, move, or delete a container. You can also connect a container to one or more networks, attach storage to it, or even create a new image based on its current state.
+
+A container registry is a centralized system used to store, manage, and distribute container images and OCI compliant artifacts including container images. Common ones are Docker Hub, Quay.io, and Github Container Registry
+
 ## Creating a container
 
 To create a container, we will use a container image. The contents of this image file are duplicated into the sandboxed environment as the root filesystem using OverlayFS and chroot. There are many strategies for mounting the root filesystem in the container, but OverlayFS is quite the common one.

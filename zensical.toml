@@ -1,6 +1,6 @@
 [project]
 site_url = "https://www.example.com/"
-site_name = "Resources"
+site_name = "C365"
 # site_description = "Your project description"
 # site_author = "Your name"
 
@@ -12,6 +12,9 @@ edit_uri = "https://github.com/edit/main/docs/"
 nav = [
   { "Get started" = "index.md" },
   { "Containers" = "containers.md" },
+  { "Docker & Podman" = "docker-podman.md" },
+  { "Podman" = "podman.md" },
+
 ]
 extra_css = [
   "stylesheets/extra.css",
@@ -59,7 +62,7 @@ features = [
 # logo = "assets/logo.png"
 
 [project.theme.icon]
-# logo = "lucide/smile"
+logo = "lucide/file-box"
 view = "simple/github"
 
 
@@ -67,12 +70,17 @@ view = "simple/github"
 # text = "Inter"
 # code = "Jetbrains Mono"
 [project.theme]
+favicon = "img/c365.svg"
 features = [
   "content.action.edit", # Edit this page
   "content.action.view", # View source of this page
   "navigation.footer",
 
 ]
+[project.theme.icon.admonition]
+tip = "octicons/ai-model-16"
+
+
 [[project.theme.palette]]
 media = "(prefers-color-scheme)"
 toggle.icon = "lucide/monitor"
