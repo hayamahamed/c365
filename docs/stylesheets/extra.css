@@ -1,0 +1,12 @@
+.md-header__source {
+    display: none;
+}
+
+.md-grid {
+    max-width: 100%;
+}
+
+.md-typeset {
+    color: none;
+    background-color: transparent;
+}
