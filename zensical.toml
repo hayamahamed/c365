@@ -11,7 +11,7 @@ repo_name = "hayamahamed/resources"
 edit_uri = "https://github.com/edit/main/docs/"
 nav = [
   { "Get started" = "index.md" },
-  { "Containers" = "containers-101.md" },
+  { "Containers" = "containers.md" },
 ]
 extra_css = [
   "stylesheets/extra.css",
