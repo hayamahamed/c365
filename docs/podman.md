@@ -2,7 +2,7 @@
 icon: simple/podman
 ---
 
-# Podman
+# Working with Podman
 
 Containers under the control of Podman can either be run by root or by a non-privileged user. Podman manages the entire container ecosystem which includes pods, containers, container images, and container volumes using the libpod library.
 
@@ -15,7 +15,7 @@ To manage a container we have to,
 - Start / run the container
 - Open a shell that can access the container from inside
 
-??? abstract " The Shortest Way"
+??? danger " The Shortest Way"
 
     All of these can be done in a single line
 
@@ -47,7 +47,11 @@ To manage a container we have to,
 
     This line does the same job `podman run -it quay.io/almalinuxorg/almalinux`, but adds host name for the container as abc and the container name for the container as xyz which we use to access and manage the container.
 
-    This way is the shortest way to get a working container, but it lacks the customisation a container needs to do its job/s.
+    This way is the fastest way to get a working container, but it lacks the customisation a container needs to do its job/s. The optimal way is to understand,
+    1. Understand container images
+    2. Use it to create containers
+
+    It will be detailedly explained below
 
 ## Creating a container
 
@@ -59,9 +63,12 @@ Creating a container is primarily consist of three parts
 
 ### Images
 
+Container images are unchanging static files that hold executable code and operate in isolation.
+A container image assembles all the components needed to create a container on an operating system, and it comprises different image layers stacked on top of each other. Container images are immutable.
+
 #### Search in registries
 
-To create a container, we need a container image which we can find in container registries.
+Container images are primarily searched on registries.
 
 ```
 podman search almalinux
@@ -115,3 +122,32 @@ de2f7b867468d83dcc57f1ed18177debebabb064a42134067cdc9a3a2cd36536
 ```
 
 #### Search on disk
+
+To search the images present locally we can either use `podman images` or `podman image ls` as both returns the same results.
+
+```
+podman images
+```
+
+```{ .yaml .no-copy }
+REPOSITORY                      TAG         IMAGE ID      CREATED       SIZE
+quay.io/almalinuxorg/almalinux  latest      de2f7b867468  4 days ago    194 MB
+```
+
+This will show the images available locally along with,
+
+- which repo it came from
+- tag (latest as the default if no tag is mentioned. Mentioning the appropriate tag is recommended rather than using latest)
+- Image ID that we can use to create containers instead of needing to type the long repo url and its size.
+
+Note that the created date doesn't come from when we pull but from when the container image is built.
+
+We will learn more about images, how we build, and related things later.
+
+### Create and Start
+
+### Work from inside
+
+## Deleting a container
+
+## Deleting a container image

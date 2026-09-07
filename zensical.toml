@@ -14,7 +14,7 @@ nav = [
   { "Containers" = "containers.md" },
   { "Architecture" = "architecture.md" },
   { "Docker & Podman" = "docker-podman.md" },
-  { "Podman" = "podman.md" },
+  { "Working with Podman" = "podman.md" },
 
 ]
 extra_css = [
