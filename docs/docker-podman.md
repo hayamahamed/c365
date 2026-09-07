@@ -8,7 +8,7 @@ icon: lucide/boxes
 
     !!! tip "Imagine the final zone of a battle royal"
 
-        You and another teammate is alive. You said after you and let them advance. They looted everything. They got the first mover advantage. Right after that, they got kicked out of lobby by a sniper. You went onto camp. You got the second mover advantage. That is, in a nutshell, the story of Docker and Podman.
+        You and another teammate are alive. They advanced and looted everything. They got the first mover advantage. Right after that, they got kicked out of lobby by a sniper. You went onto camp. You got the second mover advantage. That is, in a nutshell, the story of Docker and Podman.
 
 ## Docker
 
