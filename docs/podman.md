@@ -190,14 +190,14 @@ The slashes (`\`) in the command solelu used for writing commands in a smaller w
 
 The command Argument/s and the reason to use it.
 
-| Arg/s                                   | Reason                                                 |
-| --------------------------------------- | ------------------------------------------------------ |
-| `podman create`                         | It prepares to create a container                      |
-| `--name container_name`                 | It gives the container a name "container_name"         |
-| `--hostname container_hostname`         | It gives the container a hostname "container_hostname" |
+| Arg/s                                   | Reason                                                   |
+| --------------------------------------- | -------------------------------------------------------- |
+| `podman create`                         | It prepares to create a container                        |
+| `--name container_name`                 | It gives the container the name "container_name"         |
+| `--hostname container_hostname`         | It gives the container the hostname "container_hostname" |
 | `--userns=keep-id  `                    |
 | `-p 8080:8080   `                       |
-| `-v $HOME:$HOME:Z`                      |                                                        |
+| `-v $HOME:$HOME:Z`                      |                                                          |
 | `quay.io/almalinuxorg/almalinux:latest` |
 | `sleep-infinity`                        |
 
