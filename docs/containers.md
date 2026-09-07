@@ -11,8 +11,6 @@ icon:
     <figcaption>F1: Linux Container</figcaption>
 </figure>
 
-!!! info "This section will walk you through the basic technical implementations of container systems which is not import to work with containers, but it will be rewarding when one wants to know why it works instead of "We type, it runs". You may skip it and start from [here](docker-podman) to work with containers."
-
 A container is a sandboxed runtime environment on Linux systems. The sandbox is constructed using the utilities present in the Linux kernel. Software running in this sandbox share the kernel with the host it is running on, but the certain aspects of kernel that store the machine state are abstracted through namespaces to allow the isolated or the container environments to have a different state than the host even though they are sharing the same kernel.
 
 As you may or may not heard of containers in MacOS and Windows. Windows and macOS run Linux containers by using a lightweight virtual machine in the background to provide the features only Linux kernel can offer.
@@ -74,13 +72,15 @@ In F2 above, the sandboxed container environment can be seen as the last third b
 | user_ns              | The User Namespace (user_ns) the sandboxed environments to have its own set of user and group IDs that will map to unique user and group IDs back on the host system.                                                                     |
 | seccomp              | seccomp is a utility acts as a filter for kernel calls. This allows us to drop Kernel capabilities in the sandboxed environment. Utilizing seccomp is also not strictly vital to containers.                                              |
 
+We will be learning more about this in the following section [achitecture](architecture) which is not needed to manage container but helpful to grasp underlying concepts
+
 ## Containers, images, and registries
 
 !!! info
 
     The Open Container Initiative (OCI) is an open governance structure for the express purpose of creating open industry standards around container formats and runtimes.
 
-An OCI image, commonly called an image or a container image, is a read-only template with instructions for creating a Docker container. Often, an image is based on another image, with some additional customization.
+An OCI image, commonly called an image or a container image, is a read-only template with instructions for creating a container. Often, an image is based on another image, with some additional customization.
 
 A container is a runnable instance of an image. You can create, start, stop, move, or delete a container. You can also connect a container to one or more networks, attach storage to it, or even create a new image based on its current state.
 

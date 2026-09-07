@@ -12,6 +12,7 @@ edit_uri = "https://github.com/hayamahamed/c365/main/docs/"
 nav = [
   { "Get started" = "index.md" },
   { "Containers" = "containers.md" },
+  { "Architecture" = "architecture.md" },
   { "Docker & Podman" = "docker-podman.md" },
   { "Podman" = "podman.md" },
 
