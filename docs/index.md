@@ -1,4 +1,5 @@
 ---
+icon: lucide/rocket
 hide:
   - toc
   - path
