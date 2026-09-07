@@ -146,8 +146,67 @@ We will learn more about images, how we build, and related things later.
 
 ### Create and Start
 
+As you know, containers' image layer is immutable after creation. It is mandatory to configure while creating the container by adding tags to the command itself.
+
+```
+podman create \
+  --name container_name \
+  --hostname container_hostname \
+  --userns=keep-id \
+  -p 8080:8080 \
+  -v $HOME:$HOME:Z \
+  quay.io/almalinuxorg/almalinux:latest \
+  sleep-infinity
+```
+
+```{ .yaml .no-copy }
+2b76e73ae5366148493c841e0980b41fa53c4e28710d581dcb56d8c19d764055
+```
+
+The random numerical string that comes as output is a hex hash you can use to access the container instead of using the container name (aka container id).
+The hex hash is based on the combination of random data, timestamp, and host info, so the hash is almost always unique to one another.
+
+??? info
+
+    To access the container, You dont need to use the whole hash / container id of it of it but, you do need to use the hash in a length in which the the hash can be idenified distinctly from others. The hash we are using must start from the first character and can go all the way upto all 52 chars depending on the precision needed.
+
+
+    In a hash ```6cd72d2433f3fc2795adc3f288de773500ff80113fd05ff40a7bf38e8d533b2b``` You can use `6c`, `6cd72d2433f3fc279`, or `6cd72d2433f3fc2795a` as long as there's no other hashes starting with the same chars. In those areas we have to make the hash long enough (as mentioned above) .
+
+    you cant use `f07` if two or more hashes start with `f07`.
+
+    !!! example "For example"
+
+          If there're three hashes as <br>
+            - `27abf265efc3d94996f8ada17abcd742fcab95a3f59fc67897cd5ea18725fcf5` <br>
+            - `27af40ca73ec600cc7cc0a7d80c68f178bff2ccdbc34e5f11b7db86d28cf5601` <br>
+            - `27af4001d44e3774f7c5715f59a5ee76c47829c565b9bc273671d8ee012d206c` <br>
+
+           You'd have to atleast use the hash like 27af400 as the hash isn't presented in more than one hash. Most of the times, using first few chars to a 12 is enough.
+
+The above create command creates a writable container layer over the specified image and prepares it for running the specified command. The container ID is then printed to STDOUT (Usually the output in the terminal unless used in programs for different purposes). This is similar to podman run -d except the container is never started. You can then use the podman start container command to start the container at any point.
+
+The slashes (`\`) in the command solelu used for writing commands in a smaller width.
+
+The command Argument/s and the reason to use it.
+
+| Arg/s                                 | Reason                                                 |
+| ------------------------------------- | ------------------------------------------------------ |
+| podman create                         | It prepares to create a container                      |
+| --name container_name                 | It gives the container a name "container_name"         |
+| --hostname container_hostname         | It gives the container a hostname "container_hostname" |
+| --userns=keep-id                      |
+| -p 8080:8080                          |
+| -v $HOME:$HOME:Z                      |
+| quay.io/almalinuxorg/almalinux:latest |
+| sleep-infinity                        |
+
 ### Work from inside
 
 ## Deleting a container
 
 ## Deleting a container image
+
+```
+
+```
