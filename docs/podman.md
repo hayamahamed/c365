@@ -190,7 +190,7 @@ The hex hash is based on the combination of random data, timestamp, and host inf
 
 The above create command creates a writable container layer over the specified image and prepares it for running the specified command. The container ID is then printed to STDOUT (Usually the output in the terminal unless used in programs for different purposes). This is similar to podman run -d except the container is never started. You can then use the podman start container command to start the container at any point.
 
-The slashes (`\`) in the command solelu used for writing commands in a smaller width.
+The slashes (`\`) in the command solely used for writing commands in a smaller width.
 
 The command Argument/s and the reason to use it.
 
