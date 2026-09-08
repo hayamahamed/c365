@@ -6,5 +6,3 @@ hide:
   - navigation
 template: "index.html"
 ---
-
-# Get Started

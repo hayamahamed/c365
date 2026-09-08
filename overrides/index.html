@@ -10,6 +10,13 @@
 {% block content %}
 <div>
     <style>
+        .hello {
+            position: absolute;
+            bottom: 110px;
+            right: 10px;
+            filter: invert(0.5);
+            width: 40%;
+        }
         p {
             margin: 0 0 22px;
 
@@ -50,7 +57,7 @@
     <p>A comprehensive documentation about container technology</p>
 
     <p>
-        This guide primarily focuses utilizing Podman and rpm based linux
+        This guide primarily focuses on utilizing Podman and rpm based linux
         distributions. <br />
         It's planned to add support for other platforms and software down the
         road.
@@ -60,6 +67,7 @@
     <a href="containers" class="button">
         Get started with architecture (Draft)
     </a>
+    <img src="img/mascot.svg" class="hello" />
 </div>
 
 {% endblock %}
