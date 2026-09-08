@@ -154,7 +154,7 @@ podman create \
   --hostname container_hostname \
   --userns=keep-id \
   -p 8080:8080 \
-  -v $HOME:$HOME:Z \
+  -v $HOME:$HOME:z \
   quay.io/almalinuxorg/almalinux:latest \
   sleep-infinity
 ```
@@ -165,6 +165,8 @@ podman create \
 
 The random numerical string that comes as output is a hex hash you can use to access the container instead of using the container name (aka container id).
 The hex hash is based on the combination of random data, timestamp, and host info, so the hash is almost always unique to one another.
+
+###### info
 
 ??? info
 
@@ -190,16 +192,75 @@ The slashes (`\`) in the command solelu used for writing commands in a smaller w
 
 The command Argument/s and the reason to use it.
 
-| Arg/s                                   | Reason                                                   |
-| --------------------------------------- | -------------------------------------------------------- |
-| `podman create`                         | It prepares to create a container                        |
-| `--name container_name`                 | It gives the container the name "container_name"         |
-| `--hostname container_hostname`         | It gives the container the hostname "container_hostname" |
-| `--userns=keep-id  `                    |
-| `-p 8080:8080   `                       |
-| `-v $HOME:$HOME:Z`                      |                                                          |
-| `quay.io/almalinuxorg/almalinux:latest` |
-| `sleep-infinity`                        |
+| No  | Arg/s                                   | Reason                                                                            |
+| --- | --------------------------------------- | --------------------------------------------------------------------------------- |
+| 1   | `podman create`                         | It prepares to create a container                                                 |
+| 2   | `--name container_name`                 | It gives the container the name "container_name"                                  |
+| 3   | `--hostname container_hostname`         | It gives the container the hostname "container_hostname"                          |
+| 4   | `--userns=keep-id  `                    | It maps the host UID with container UIDs to omit ownership conflicts              |
+| 5   | `-p 8080:8080`                          | It maps the localhost:8000 containers localhost:8000                              |
+| 6   | `-v $HOME:$HOME:z`                      | It maps the host volume home with a volume inside container as home.              |
+| 7   | `quay.io/almalinuxorg/almalinux:latest` | This shows what image to use for the container.                                   |
+| 8   | `sleep-infinity`                        | This keeps the container alive even if no process is running inside (if started). |
+
+1.`podman create`
+
+In podman theres two things, podman containers, and podman pods. Podman default to container when we type podman create and pod needs pod in the command which we will learn later. So the `podman create` is as same as `podman container create` . This part of the line instructs podman to create a container with the configurations written in the rest of the part of the command
+
+2.`--name container_name`
+
+It gives the container a label as `container_name` which we can use in the host to access the container instead of using the container id which has no effect inside the container. It is recommended to give a name that resembles the existence of the container
+
+3.`--hostname container_hostname`
+
+It gives the hostname the name `container_hostname` which comes after the `@`. You may wonder what about the username, We will be talking about it in the following section.
+
+4.`--userns=keep-id`
+
+A misconception is that a user only gets a single id. In reality, they get a pool of id all mapped to the same user. this line maps an id from it to the user inside the container. Since we create this as non-user the root and non-root account of the container gets mapped from the same pool of UID of the host user. Here, the userns keeps the id of host user making the container inherit the same username as host.
+
+5.`-p 8080:8080`
+
+As stated above, it maps the port 8080 if host with 8080 of the container. by default, mentioning port only maps the containers 8080 ports to host's http://0.0.0.0:8080 which anyone can access (even over the internet if configured.). Since anyone can access thing port can also be accessed http://localhost:8080 and http://127.0.0.1:8080. To avoid this you have to specify the address like `-p 127.0.0.1:8080:8080`. It can be specified in anyways.
+
+Most of the time, a single port isn't enough so we can give a range of ports (along with specific ports if needed) as `-p 8000-9000:8000-9000`. It's not necessary to only have a single publishing arg (-p) in the command. Multiple -p args can be stacked together like `-p 8000-9000:8000-9000 -p 43:43 -p 127.0.0.1:9001:9001`. In fact, It's almost always done like this.
+
+6.`-v $HOME:$HOME:z`
+
+It mapes the home volume of the host with a new directory inside the container as home's name on host
+
+Things after : is considered tag/s and Z and z are SELinux specific tags used to fix permission issues. the `:Z` tag means the podman performs a private, recursive relabeling of the host directory specified in the volume which is home here. Also theres a `:z` tag to which the Podman Recursively changes the SELinux context of the host directory to a shared container label (container_file_t). Use this when multiple containers need to read and write to the same host path simultaneously.
+
+Without a tag podman defaults to :rw (read and write). Even after adding SELinux tag, Podman will still use :rw unless configured as :ro (read-only) or something else. Multiple tags can be added using a simple comma `,` like `-v $HOME:$HOME:z,rw`.
+
+As stated, these are SELinux specific making it not work properly on systems that has no SELinux such as Ubuntu and Debian.
+!!! warning
+
+    - Avoid using :Z on system directories or the whole home directory
+    - Avoid using :z where strict isolated is needed.
+
+It is not necessary to know about all tags. Sticking with `:rw :ro :z :Z` for starters is enough.
+
+| Tag                          | Category            | Explanation                                                                                                                                               | Compatibility & Combinations                                                                                                                                                     |
+| :--------------------------- | :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`:rw`**                    | Access Permission   | **Read-Write (Default).** Allows the container to read, modify, and delete files inside the mount point.                                                  | **Incompatible with:** `:ro`. <br>**Must be paired with:** `:z` or `:Z` on SELinux hosts to avoid permission errors.                                                             |
+| **`:ro`**                    |                     | **Read-Only.** Blocks the container from making any changes. Attempts to write will return a `Read-only file system` error.                               | **Incompatible with:** `:rw`. <br>**Compatible with:** All SELinux (`:z`, `:Z`), ownership (`:U`), and propagation tags.                                                         |
+| **`:z`**                     | SELinux Labeling    | **Shared Relabel.** Recursively changes host file labels to a shared context (`container_file_t`) so multiple containers can access them.                 | **Incompatible with:** `:Z`. <br>**Compatible with:** `:rw`, `:ro`, `:U`, and propagation tags.                                                                                  |
+| **`:Z`**                     |                     | **Private Relabel.** Recursively changes host file labels to a unique, exclusive context. Only _this_ container can access the files.                     | **Incompatible with:** `:z`. <br>**Compatible with:** `:rw`, `:ro`, `:U`, and propagation tags.                                                                                  |
+| **`:U`**                     | User Ownership      | **Chown/Re-own.** Recursively changes host file ownership (UID/GID) to match the internal user running inside the container. Essential for rootless mode. | **Compatible with:** All tags. Works perfectly alongside access permissions (`:rw`/`:ro`) and SELinux tags (`:z`/`:Z`).                                                          |
+| **`:O`**                     | Performance Overlay | **Overlay Mount.** Mounts the host directory as a read-only base layer with a temporary write layer. Changes are lost when the container stops.           | **Incompatible with:** `:z`, `:Z` (bypasses SELinux labeling entirely), and propagation tags. <br>**Note:** Implicitly acts as `:rw` internally while keeping the host pristine. |
+| **`:private` / `:rprivate`** | Mount Propagation   | **Private (Default).** Mount changes inside the container do not show up on the host, and vice versa. (`r` applies recursively).                          | **Incompatible with:** Other propagation tags and `:O`. <br>**Compatible with:** All access (`:rw`/`:ro`), SELinux (`:z`/`:Z`), and `:U` tags.                                   |
+| **`:shared` / `:rshared`**   |                     | **Shared.** Two-way propagation. Mounts made on the host reflect inside the container, and mounts made inside the container reflect on the host.          | **Incompatible with:** Other propagation tags and `:O`. <br>**Compatible with:** All access, SELinux, and `:U` tags.                                                             |
+| **`:slave` / `:rslave`**     |                     | **Slave.** One-way propagation. Mounts made on the host reflect inside the container, but container mounts do not show up on the host.                    | **Incompatible with:** Other propagation tags and `:O`. <br>**Compatible with:** All access, SELinux, and `:U` tags.                                                             |
+| **`:unbindable`**            |                     | **Unbindable.** Prevents this specific directory from ever being cloned or bind-mounted somewhere else in the future.                                     | **Incompatible with:** Other propagation tags and `:O`. <br>**Compatible with:** All access, SELinux, and `:U` tags.                                                             |
+
+7.`quay.io/almalinuxorg/almalinux:latest`
+
+It gives Podman the image to use. You can either use the repository name like this or the container ID of it. The container ID doesn't have to be full 52 chars. It just need to be long enough to distintively identify from other ID. For more info regarding about using container id, refer the [info](#info) admonition above.
+
+8.`sleep infinity`
+
+Usually containers stop right after the last proc inside it ends making it stop right after starting the container so `sleep infinity` makes it stay alive forever. You can also specify the time it should be kept alive after the last process end by replacing the infinity with a number that reflects the needed time it needs to stay alive in seconds (ie. `sleep 600` means stay alive for 600 sec or 6 min)
 
 ### Work from inside
 

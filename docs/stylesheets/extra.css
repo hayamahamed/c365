@@ -16,3 +16,8 @@
     color: none;
     background-color: transparent;
 }
+
+h6 {
+    line-height: 0;
+    visibility: hidden;
+}
