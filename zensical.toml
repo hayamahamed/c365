@@ -23,7 +23,7 @@ nav = [
 
     { "Home" = "index.md" },
     { "Containers" = [
-        { "Fundemental" = [
+        { "Fundamental" = [
             { "Linux Containers" = "containers.md" },
             { "Docker & Podman" = "docker-podman.md" },
         ]},
