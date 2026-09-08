@@ -22,15 +22,15 @@ Podman uses a fork-exec model. It manages containers by a two step process (fork
 
 When we compare Docker and Podman, Docker is the first mover who's blessed with the network effect and Podman is the second mover who is blessed by the awarness of the first mover's mistakes.
 
-| Feature        | Podman                                  | Docker                                  | Verdict      |
-| -------------- | --------------------------------------- | --------------------------------------- | ------------ |
-| Architecture   | Daemonless (user processes only)        | Centralized daemon (dockerd)            | Podman       |
-| Security       | Rootless by default                     | root unless configured manually         | Podman       |
-| Performance    | Faster startup & lower memory footprint | Slower & heavier memory footprint       | Podman       |
-| Kubernetes     | Built-in pod model, YAML generator      | Compose/Buildx-based workflows          | Podman       |
-| Ecosystem      | Lightweight, OCI-native                 | Large community, Docker Hub integration | Depends      |
-| Learning Curve | Docker-compatible                       | CLI Standard in most workflows          | Tie          |
-| Orchestration  | Kubernetes only                         | Swarm and Kubernetes                    | Tie / Docker |
+| Feature        | Podman                                  | Docker                                  | Verdict |
+| -------------- | --------------------------------------- | --------------------------------------- | ------- |
+| Architecture   | Daemonless (user processes only)        | Centralized daemon (dockerd)            | Podman  |
+| Security       | Rootless by default                     | root unless configured manually         | Podman  |
+| Performance    | Faster startup & lower memory footprint | Slower & heavier memory footprint       | Podman  |
+| Kubernetes     | Built-in pod model, YAML generator      | Compose/Buildx-based workflows          | Podman  |
+| Ecosystem      | Lightweight, OCI-native                 | Large community, Docker Hub integration | Depends |
+| Learning Curve | Docker-compatible                       | CLI Standard in most workflows          | Tie     |
+| Orchestration  | Kubernetes only                         | Swarm and Kubernetes                    | Docker  |
 
 ## Analogy
 
