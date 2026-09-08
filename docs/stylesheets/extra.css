@@ -1,7 +1,6 @@
 * {
     marigin: 0;
     padding: 0;
-    height: 100dvh;
     border-sizing: border-box;
 }
 
@@ -24,7 +23,6 @@ h6 {
 }
 
 .task-list-indicator {
-    display: none;
     visibility: hidden;
 }
 
