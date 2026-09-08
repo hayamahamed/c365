@@ -23,9 +23,14 @@ nav = [
 
     { "Home" = "index.md" },
     { "Containers" = [
-        { "Containers" = "containers.md" },
-        { "Docker & Podman" = "docker-podman.md" },
-        { "Working with Podman" = "podman.md" },
+        { "Fundemental" = [
+            { "Containers" = "containers.md" },
+            { "Docker & Podman" = "docker-podman.md" },
+        ]},
+        {
+        "Working with Podman" = [
+            { "Podman Basics" = "podman.md" },
+        ]},
     ]},
     { "Architecture" =  [
         { "Architecture" = "architecture.md" },
@@ -82,6 +87,8 @@ features = [
 [project.theme.icon]
 logo = "lucide/file-box"
 view = "simple/github"
+repo = "fontawesome/brands/github"
+
 
 
 # [project.theme.font]
@@ -98,6 +105,8 @@ features = [
   "navigation.path",
   "navigation.instant",
   "navigation.tabs",
+ "navigation.tabs.sticky",
+ "navigation.sections",
 ]
 [project.theme.icon.admonition]
 tip = "octicons/ai-model-16"
