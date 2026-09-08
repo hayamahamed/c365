@@ -9,14 +9,30 @@ site_name = "C365"
 repo_url = "https://github.com/hayamahamed/c365"
 repo_name = "hayamahamed/c365"
 edit_uri = "https://github.com/hayamahamed/c365/main/docs/"
-nav = [
-  { "Get started" = "index.md" },
-  { "Containers" = "containers.md" },
-  { "Architecture" = "architecture.md" },
-  { "Docker & Podman" = "docker-podman.md" },
-  { "Working with Podman" = "podman.md" },
+# nav = [
+#   { "Get started" = "index.md" },
+#   { "Containers" = "containers.md" },
+#   { "Architecture" = "architecture.md" },
+#   { "Docker & Podman" = "docker-podman.md" },
+#   { "Working with Podman" = "podman.md" },
 
+# ]
+#
+
+nav = [
+
+    { "Home" = "index.md" },
+    { "Containers" = [
+        { "Containers" = "containers.md" },
+        { "Docker & Podman" = "docker-podman.md" },
+        { "Working with Podman" = "podman.md" },
+    ]},
+    { "Architecture" =  [
+        { "Architecture" = "architecture.md" },
+
+    ]},
 ]
+
 extra_css = [
   "stylesheets/extra.css",
 ]
@@ -41,6 +57,7 @@ features = [
   "content.tabs.link",
   "content.tooltips",
   # "header.autohide",
+
   "navigation.expand",
   "navigation.footer",
   "navigation.indexes",
@@ -71,13 +88,16 @@ view = "simple/github"
 # text = "Inter"
 # code = "Jetbrains Mono"
 [project.theme]
+custom_dir = "overrides"
 favicon = "img/c365.svg"
 features = [
   "content.action.edit", # Edit this page
   "content.action.view", # View source of this page
   "navigation.footer",
   "content.code.copy",
-
+  "navigation.path",
+  "navigation.instant",
+  "navigation.tabs",
 ]
 [project.theme.icon.admonition]
 tip = "octicons/ai-model-16"
@@ -143,3 +163,16 @@ toc.toc_depth = 5
 
 [project.extra]
 generator = false
+
+[project.extra.consent]
+title = "Notice"
+description = """
+All product names, logos, and their other branding or marketing aspects are property of their respective owners or entities. They are used here for identification and educational purposes only.
+Unless specified otherwise, we do not claim endorsement or affiliation with anyone. Click accept to proceed else you can simply close this page
+"""
+actions = [
+  "accept",
+]
+
+[project.extra.consent.cookies]
+github.name = ""

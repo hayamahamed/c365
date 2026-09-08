@@ -21,3 +21,12 @@ h6 {
     line-height: 0;
     visibility: hidden;
 }
+
+.task-list-indicator {
+    display: none;
+    visibility: hidden;
+}
+
+a {
+    text-decoration: none !important;
+}

@@ -264,11 +264,9 @@ It gives Podman the image to use. You can either use the repository name like th
 
 Usually containers stop right after the last proc inside it ends making it stop right after starting the container so `sleep infinity` makes it stay alive forever. You can also specify the time it should be kept alive after the last process end by replacing the infinity with a number that reflects the needed time it needs to stay alive in seconds (ie. `sleep 600` means stay alive for 600 sec or 6 min)
 
-#### Starting a container
+#### Starting and Using a container
 
-Now the container's created. Let's look at how start it
-
-#### Using a container
+Now the container's created. It can be started via podman
 
 ## Deleting a container
 

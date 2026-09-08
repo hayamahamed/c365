@@ -72,7 +72,7 @@ In F2 above, the sandboxed container environment can be seen as the last third b
 | user_ns              | The User Namespace (user_ns) the sandboxed environments to have its own set of user and group IDs that will map to unique user and group IDs back on the host system.                                                                     |
 | seccomp              | seccomp is a utility acts as a filter for kernel calls. This allows us to drop Kernel capabilities in the sandboxed environment. Utilizing seccomp is also not strictly vital to containers.                                              |
 
-We will be learning more about this in the following section [achitecture](architecture) which is not needed to manage containers, but helpful to grasp underlying concepts
+We will be learning more about this in the section [achitecture](architecture) which is not needed to manage containers, but helpful to grasp underlying concepts
 
 ## Containers, images, and registries
 

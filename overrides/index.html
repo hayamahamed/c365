@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+<!---->
+{% block htmltitle %}
+<title>C356</title>
+{% endblock %}
+<!---->
+
+<!---->
+{% block content %}
+<div>
+    <style>
+        .hero-box {
+            position: relative;
+            width: 100%;
+            min-height: calc(100vh - 320px);
+        }
+
+        /* -------------------------
+           Background artwork
+        ------------------------- */
+
+        .hero-content {
+            position: absolute;
+
+            left: 10px;
+            bottom: 10px;
+
+            z-index: 2;
+        }
+
+        .hero-content h1 {
+            margin: 0 0 20px;
+
+            font-size: 46px;
+            line-height: 1.08;
+            letter-spacing: -2px;
+            font-weight: 700;
+        }
+
+        .hero-description {
+            margin: 0 0 22px;
+
+            font-size: 17px;
+            line-height: 1.45;
+        }
+
+        .hero-credit {
+            margin: 0 0 20px;
+
+            font-size: 14px;
+            line-height: 1.4;
+
+            font-style: italic;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* -------------------------
+           Buttons
+        ------------------------- */
+
+        .hero-buttons {
+            display: flex;
+            align-items: center;
+
+            gap: 6px;
+        }
+
+        .button {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            height: 42px;
+
+            margin-top: 10px;
+            padding: 10px 25px;
+
+            border-radius: 999px;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            color: #ffffff !important;
+            background: #292929;
+        }
+
+        /* -------------------------
+           Mobile
+        ------------------------- */
+
+        @media (max-width: 800px) {
+            .hero-box {
+                min-height: 700px;
+            }
+
+            .hero-content {
+                left: 30px;
+                right: 30px;
+                bottom: 55px;
+
+                width: auto;
+            }
+
+            .hero-content h1 {
+                font-size: 36px;
+                letter-spacing: -1.5px;
+            }
+
+            .hero-description {
+                font-size: 15px;
+            }
+        }
+    </style>
+    <div class="hero-box">
+        <div class="hero-content">
+            <h1>C365</h1>
+
+            <p class="hero-description">
+                A comprehensive documentation about container technology
+            </p>
+
+            <p class="hero-credit">
+                This guide primarily focuses utilizing Podman and rpm based
+                linux distributions. <br />
+                It's planned to add support for other platforms and software
+                down the road.
+            </p>
+
+            <a href="containers" class="button">
+                Get started with containers (currently writing)
+            </a>
+            <a href="containers" class="button">
+                Get started with architecture (Currently draft)
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
