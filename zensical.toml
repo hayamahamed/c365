@@ -9,15 +9,7 @@ site_name = "C365"
 repo_url = "https://github.com/hayamahamed/c365"
 repo_name = "hayamahamed/c365"
 edit_uri = "https://github.com/hayamahamed/c365/main/docs/"
-# nav = [
-#   { "Get started" = "index.md" },
-#   { "Containers" = "containers.md" },
-#   { "Architecture" = "architecture.md" },
-#   { "Docker & Podman" = "docker-podman.md" },
-#   { "Working with Podman" = "podman.md" },
 
-# ]
-#
 
 nav = [
 
