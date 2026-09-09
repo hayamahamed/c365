@@ -21,13 +21,15 @@ nav = [
     { " Work With Containers" = [
         {
         "Podman Containers" = [
-            { "Podman Basics" = "podman.md" },
+            { "Podman 101" = "podman.md" },
         ]},
     ]},
     { "Containers Architecture" =  [
         { "Architecture" = "architecture.md" },
 
     ]},
+    { "Glossaries" = "glossary.md" },
+
 ]
 
 extra_css = [
@@ -165,6 +167,12 @@ toc.toc_depth = 5
 [project.extra]
 generator = false
 
+
+
+
+
+[project.theme.icon.tag]
+default = "lucide/hash"
 # [project.extra.consent]
 # title = "Notice"
 # description = """

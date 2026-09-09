@@ -1,5 +1,5 @@
 ---
-icon: lucide/boxes
+icon:
 ---
 
 # Docker & Podman[^1]
@@ -41,6 +41,6 @@ While both tools share a similar feature set. Docker often resists structural ch
 
 Moving forward, this resource will focus primarily on Podman and rpm based operating systems. We hope to introduce support for other platforms down the road. :heart:
 
-[^1]: Docker and Podman are registered trademarks of Docker Inc and Redhat Inc.
+[^1]: Docker and Podman are registered trademarks of Docker Inc and Redhat Inc respectively.
 
 [^2]: In 2013, Docker came and revolutionized how software was built and deployed. As Docker grew, it began adding features directly into the core engine (such as Swarm) which was opposed and resisted by the community, particularly, CoreOS, a company that specialized in building minimal, highly secure Linux operating systems for running containers at scale, So CoreOS designed Rkt with a fundamentally different architecture. It was what introduced the no-daemon architecture that can directly integrate with Linux init systems (especially well with systemd). This act fragmented the enter container ecosystem therefor, the Open Container Initiative (OCI) under the Linux Foundation formed that managed to get pieces from both the Docker and Rkt to build a standard called OCI standards that all containarization technologies follow now. Redhat acquired CoreOS in 2018 for a quater billion dollars. They created Podman out of the daemon less philosophy of Rkt owned by the CoreOS acquisation and the user friendly CLI of Docker. It gave podman the characteristics of _Rootless by default_, _Daemonless architecture_, and _First-Class Pods (a concept borrowed from kubernetes)_ .

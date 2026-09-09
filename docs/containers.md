@@ -1,5 +1,5 @@
 ---
-icon: simple/linuxcontainers
+icon:
 ---
 
 # Linux Containers

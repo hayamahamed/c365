@@ -1,21 +1,27 @@
 ---
 icon: simple/podman
+tags:
+  - basic
+  - 101
 ---
 
-# Working with Podman
+!!! success "C365, at its final form, will be fully self-contained when combined with manpage and help page. Only the required depth for each command / use case will be covered. It is expected to get assistance from manpage and help page[^1]. "
 
-Containers under the control of Podman can either be run by root or by a non-privileged user. Podman manages the entire container ecosystem which includes pods, containers, container images, and container volumes using the libpod library.
+# Podman 101
+
+Containers under the control of Podman can either be run by root or by a non-privileged user. Podman manages the entire container ecosystem which includes pods, containers, container images, and container volumes using the libpod library. Podman, by default, creates rootless containers.
 
 ## Managing a container
 
-To manage a container we have to,
+To manage a container, the order should be as follows,
 
-- Get / pull the container image
+- search the image
+- pull the image
 - Create a container
-- Start / run the container
-- Open a shell that can access the container from inside
+- Start the container
+- Open a shell that can access the container
 
-??? danger " The Shortest Way"
+??? info "How to create, start, and use a container in a single command"
 
     All of these can be done in a single line
 
@@ -47,17 +53,13 @@ To manage a container we have to,
 
     This line does the same job `podman run -it quay.io/almalinuxorg/almalinux`, but adds host name for the container as abc and the container name for the container as xyz which we use to access and manage the container.
 
-    This way is the fastest way to get a working container, but it lacks the customisation a container needs to do its job/s. The optimal way is to understand,
-    1. Understand container images
-    2. Use it to create containers
-
-    It will be detailedly explained below
+    This is the fastest way to get a working container. It can also be stacked with many more arguments to customize. It is discouraged to use it until one gets the optimal understanding of how to work with the containers.
 
 ## Creating a container
 
 Creating a container is primarily consist of three parts
 
-- Search for the images across registries
+- Search for the image across registries
 - Get the appropriate container image to use
 - Use it to create a container
 
@@ -87,7 +89,7 @@ docker.io/almalinux/8-base             AlmaLinux release 8.10 base container ima
 
 Podman defaults to docker.io, so podman search returns it.
 
-You can also specify which registry to use
+Which registry to use also can be specified as follows,
 
 ```
 podman search quay.io/almalinux
@@ -106,7 +108,7 @@ quay.io/containerdisks/almalinux            # Almalinux Containerdisk Images  <i
 
 #### Pull image
 
-After the search is completed, now we should be left with url/s we can use it to get the container image to local storage.
+The url from the `podman search` can be used to get the container image (to local storage) using `podman pull`.
 
 ```
 podman pull quay.io/almalinuxorg/almalinux
@@ -121,9 +123,11 @@ Writing manifest to image destination
 de2f7b867468d83dcc57f1ed18177debebabb064a42134067cdc9a3a2cd36536
 ```
 
+As you may see, since no tag's specified it default to latest.
+
 #### Search on disk
 
-To search the images present locally we can either use `podman images` or `podman image ls` as both returns the same results.
+To search the images present locally, either `podman images` or `podman image ls` can be used as both returns the same results.
 
 ```
 podman images
@@ -142,13 +146,69 @@ This will show the images available locally along with,
 
 Note that the created date doesn't come from when we pull but from when the container image is built.
 
+#### Delete
+
+Image ID, the whole url, or the name of an image can be used to remove it. The name is the rest part excluding the domain (such as quay.io) or localhost. Unless specified by the image ID, the tag is necessary or it will defaults to `:latest` just like podman pull. Here, it is recommended to either use the whole url with the tag or the image ID to avoid unecessary troubles.
+
+A locally stored image can be deleted or removed via `podman image rm`.
+
+```{.yaml .no-copy}
+$ podman images
+REPOSITORY                     TAG         IMAGE ID      CREATED            SIZE
+localhost/main                 latest      f91f69dbf9eb  7 days ago         1.76 GB
+docker.io/almalinux/10-base    latest      4a26427a4423  3 months ago       599 MB
+
+```
+
+```{.yaml .no-copy}
+$ podman image rm f91f69dbf9eb
+Untagged: localhost/main:latest
+Deleted: f91f69dbf9ebfd3f78d55893fbb81e9546c1ff2ac25c50d632008b617c20447d
+```
+
+```{.yaml .no-copy}
+$ podman image rm 10-base
+Untagged: docker.io/almalinux/10-base:latest
+Deleted: 4a26427a4423e96fd6e3991e4ff6dfe7397510e159e9482635b4cc395c5ce750
+```
+
+_$ is just a placeholder to indicate its a command, not an STDOUT printed to terminal._
+
 We will learn more about images, how we build, and related things later.
 
-### Create, Start, and Use
+### Search, Create, Start, and Use
 
-#### Creating a container
+#### Search
 
-As you know, containers' image layer is immutable after creation. It is mandatory to configure while creating the container by adding tags to the command itself.
+To be precise, Podman has no search for containers like for images but, it can list the containers.
+
+```
+
+podman ps
+
+```
+
+```{.yaml .no-copy}
+CONTAINER ID  IMAGE                                  COMMAND         CREATED       STATUS        PORTS                   NAMES
+bfdd7ca04f23  quay.io/almalinuxorg/almalinux:latest  sleep infinity  29 hours ago  Up 5 seconds  0.0.0.0:8080->8080/tcp  cn
+```
+
+`podman ps` prints the running containers info such as the name, the command that keeps it running, when it was created, its status, mapped ports, and the container name. by default, it prints only about the info of running container/s . It can take the `-a` (--all) argument to show all the containers. It can be as follows,
+
+```
+podman ps -a
+```
+
+```{.yaml .no-copy}
+podman ps -a
+CONTAINER ID  IMAGE                                  COMMAND         CREATED       STATUS             PORTS                   NAMES
+3bfcec68a79f  docker.io/almalinux/10-base:latest     infinity        2 days ago    Up About a minute                          dev
+bfdd7ca04f23  quay.io/almalinuxorg/almalinux:latest  sleep infinity  30 hours ago  Up 14 minutes      0.0.0.0:8080->8080/tcp  cn
+```
+
+#### Create
+
+As you know, containers' image layer is immutable after creation. It is mandatory to add needed configuration while / before creating the container by adding tags to the command itself or any otherway which will be covered later.
 
 ```
 podman create \
@@ -165,21 +225,18 @@ podman create \
 2b76e73ae5366148493c841e0980b41fa53c4e28710d581dcb56d8c19d764055
 ```
 
-The random numerical string that comes as output is a hex hash you can use to access the container instead of using the container name (aka container id).
+The numerical string that comes as the output is a hex hash / container ID that can be used to access the container instead of using the container name.
 The hex hash is based on the combination of random data, timestamp, and host info, so the hash is almost always unique to one another.
 
 ###### info
 
 ??? info
 
-    To access the container, You dont need to use the whole hash / container id of it of it but, you do need to use the hash in a length in which the the hash can be idenified distinctly from others. The hash we are using must start from the first character and can go all the way upto all 52 chars depending on the precision needed.
+    To access the container, The whole hash or the container ID of it is not necessary but, it must be in the length in which the the hash can be idenified distinctly from the others. The hash / ID must start from the first character and can go all the way upto all 52 chars depending on the need/s.
 
+    `f07` as the ID can not be used if two or more hashes start with `f07`.
 
-    In a hash ```6cd72d2433f3fc2795adc3f288de773500ff80113fd05ff40a7bf38e8d533b2b``` You can use `6c`, `6cd72d2433f3fc279`, or `6cd72d2433f3fc2795a` as long as there's no other hashes starting with the same chars. In those areas we have to make the hash long enough (as mentioned above) .
-
-    you cant use `f07` if two or more hashes start with `f07`.
-
-    !!! example "For example"
+    !!! example
 
           If there're three hashes as <br>
             - `27abf265efc3d94996f8ada17abcd742fcab95a3f59fc67897cd5ea18725fcf5` <br>
@@ -188,7 +245,7 @@ The hex hash is based on the combination of random data, timestamp, and host inf
 
            You'd have to atleast use the hash like 27af400 as the hash isn't presented in more than one hash. Most of the times, using first few chars to a 12 is enough.
 
-The above create command creates a writable container layer over the specified image and prepares it for running the specified command. The container ID is then printed to STDOUT (Usually the output in the terminal unless used in programs for different purposes). This is similar to podman run -d except the container is never started. You can then use the podman start container command to start the container at any point.
+The above create command creates a writable container layer over the specified image and prepares it for running the specified command. The container ID is then printed to STDOUT (Usually the output in the terminal unless used in programs for different purposes). This is similar to podman run -d except the container is never started. Now, the `podman start container` command can be used to start the container at any point.
 
 The slashes (`\`) in the command solely used for writing commands in a smaller width.
 
@@ -264,9 +321,11 @@ It gives Podman the image to use. You can either use the repository name like th
 
 Usually containers stop right after the last proc inside it ends making it stop right after starting the container so `sleep infinity` makes it stay alive forever. You can also specify the time it should be kept alive after the last process end by replacing the infinity with a number that reflects the needed time it needs to stay alive in seconds (ie. `sleep 600` means stay alive for 600 sec or 6 min)
 
-#### Starting and Using a container
+#### Start
 
 Now the container's created. It can be started via podman
+
+## Use
 
 ## Deleting a container
 
@@ -275,3 +334,5 @@ Now the container's created. It can be started via podman
 ```
 
 ```
+
+[^1]: manpage and help page are the two primary way to get the specific command's documentation. <br> man is accessed using the command `man` as _man command_ and help is `--help` / `-h` as _command -h_ .
