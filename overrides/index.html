@@ -11,11 +11,7 @@
 <div>
     <style>
         .hello {
-            position: absolute;
-            bottom: 110px;
-            right: 10px;
             filter: invert(0.5);
-            width: 40%;
         }
         p {
             max-width: 500px;
@@ -33,7 +29,7 @@
             font-style: italic;
         }
 
-        .button {
+        .start {
             display: inline-flex;
 
             margin-top: 10px;
@@ -44,8 +40,33 @@
             font-size: 14px;
             font-weight: 600;
 
+            color: slategray !important;
+            background: aliceblue;
+        }
+        .button {
+            width: 220px;
+            position: absolute;
+            bottom: 20px;
+            right: 10px;
+
+            margin-top: auto;
+            padding: 10px 25px;
+
+            border-radius: 10px;
+
+            font-size: 14px;
+            font-weight: 600;
+
             color: #f1f1f1 !important;
-            background: #010101;
+            background: grey;
+        }
+
+        .button + .button {
+            bottom: 80px;
+        }
+
+        .md-footer {
+            display: none;
         }
     </style>
 
@@ -57,9 +78,14 @@
         It is recommended for both the users who want to learn how to manage
         containers and the underlying architecture to start with general.
     </p>
+    <a href="containers" class="start">
+        Get started (General / Linux Containers)
+    </a>
 
-    <a href="containers" class="button"> Get started with general </a>
+    <br />
     <img src="img/mascot.svg" class="hello" />
+    <a href="containers" class="button"> Work with containers </a>
+    <a href="containers" class="button"> Containers architecture </a>
 </div>
 
 {% endblock %}
