@@ -2,13 +2,13 @@
 icon: lucide/boxes
 ---
 
-# Docker & Podman
+# Docker & Podman[^1]
 
-!!! note "Countless Linux container technologies have blended into thin air over the years. As the industries evolved, it left Docker and Podman."
+There were countless container technologies with fundamentally different architectures for Linux. As the industries evolved, only few left alive. Docker and Podman became the main stream.
 
-    !!! tip "Imagine the final zone of a battle royal"
+??? tip "Imagine the final zone of a battle royal"
 
-        You and another teammate are alive. They advanced and looted everything. They got the first mover advantage. Right after that, they got kicked out of lobby by a sniper. You went onto camp. You got the second mover advantage. That is, in a nutshell, the story of Docker and Podman.
+     You and another teammate are alive. They advanced and looted everything. They got the first mover advantage. Right after that, they were kicked out of the lobby in a cross-fire. You went onto camp. You got the second mover advantage. That is, in a nutshell, the story[^2].
 
 ## Docker
 
@@ -39,4 +39,8 @@ While both tools share a similar feature set. Docker often resists structural ch
 - legacy systems where migration is practically impossible, Docker remains the only solution.
 - For starting new from ground up, Podman serves as the right focal point that reduces migration needs in future.
 
-Moving forward, this resource will focus primarily on Podman and rpm based operating systems. We hope to introduce support for others down the road.
+Moving forward, this resource will focus primarily on Podman and rpm based operating systems. We hope to introduce support for other platforms down the road. :heart:
+
+[^1]: Docker and Podman are registered trademarks of Docker Inc and Redhat Inc.
+
+[^2]: In 2013, Docker came and revolutionized how software was built and deployed. As Docker grew, it began adding features directly into the core engine (such as Swarm) which was opposed and resisted by the community, particularly, CoreOS, a company that specialized in building minimal, highly secure Linux operating systems for running containers at scale, So CoreOS designed Rkt with a fundamentally different architecture. It was what introduced the no-daemon architecture that can directly integrate with Linux init systems (especially well with systemd). This act fragmented the enter container ecosystem therefor, the Open Container Initiative (OCI) under the Linux Foundation formed that managed to get pieces from both the Docker and Rkt to build a standard called OCI standards that all containarization technologies follow now. Redhat acquired CoreOS in 2018 for a quater billion dollars. They created Podman out of the daemon less philosophy of Rkt owned by the CoreOS acquisation and the user friendly CLI of Docker. It gave podman the characteristics of _Rootless by default_, _Daemonless architecture_, and _First-Class Pods (a concept borrowed from kubernetes)_ .
