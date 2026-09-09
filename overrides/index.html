@@ -10,17 +10,25 @@
 {% block content %}
 <div>
     <style>
+        main {
+            width: 100%;
+            background-image: url(img/mascot.svg);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
         .hello {
             filter: invert(0.5);
         }
         p {
             max-width: 500px;
-            margin: 0 0 22px;
             font-size: 17px;
+
             line-height: 1.45;
         }
 
-        p + p {
+        p:nth-of-type(2),
+        p:nth-of-type(3) {
             margin: 0 0 20px;
 
             font-size: 14px;
@@ -28,11 +36,17 @@
 
             font-style: italic;
         }
+        p:nth-of-type(3) {
+            position: absolute;
+            bottom: 100px;
+        }
 
         .start {
             display: inline-flex;
 
             margin-top: 10px;
+            margin-bottom: 10px;
+
             padding: 10px 25px;
 
             border-radius: 10px;
@@ -69,23 +83,32 @@
             display: none;
         }
     </style>
+    <div class="main-ow">
+        <h1>C365</h1>
 
-    <h1>C365</h1>
+        <p>A comprehensive archive about container technology</p>
 
-    <p>A comprehensive archive about container technology</p>
+        <p>
+            It is recommended for both who want to learn how to manage
+            containers and who want to understand the underlying architecture to
+            start with general.
+        </p>
+        <a href="containers" class="start">
+            Get started (General / Linux Containers)
+        </a>
 
-    <p>
-        It is recommended for both the users who want to learn how to manage
-        containers and the underlying architecture to start with general.
-    </p>
-    <a href="containers" class="start">
-        Get started (General / Linux Containers)
-    </a>
+        <br />
+        <!--<img src="img/mascot.svg" class="hello" />-->
+        <a href="podman" class="button"> Work with containers </a>
+        <a href="architecture" class="button"> Containers architecture </a>
 
-    <br />
-    <img src="img/mascot.svg" class="hello" />
-    <a href="podman" class="button"> Work with containers </a>
-    <a href="architecture" class="button"> Containers architecture </a>
+        <p>
+            Note: All trademarks are the property of their respective owners.
+            Unless specified otherwise, we do not claim endorsement or
+            affiliation with anyone. <br />Standard terminolgies are used and
+            they do not refer to any real-word actions.
+        </p>
+    </div>
 </div>
 
 {% endblock %}
