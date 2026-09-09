@@ -22,17 +22,17 @@ edit_uri = "https://github.com/hayamahamed/c365/main/docs/"
 nav = [
 
     { "Home" = "index.md" },
-    { "Containers" = [
-        { "Fundamental" = [
-            { "Linux Containers" = "containers.md" },
-            { "Docker & Podman" = "docker-podman.md" },
-        ]},
+    { "General" =  [
+        { "Linux Containers" = "containers.md" },
+        { "Docker & Podman" = "docker-podman.md" },
+    ]},
+    { " Work With Containers" = [
         {
-        "Working with Podman" = [
+        "Podman Containers" = [
             { "Podman Basics" = "podman.md" },
         ]},
     ]},
-    { "Architecture" =  [
+    { "Containers Architecture" =  [
         { "Architecture" = "architecture.md" },
 
     ]},

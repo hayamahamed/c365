@@ -39,4 +39,4 @@ While both tools share a similar feature set. Docker often resists structural ch
 - legacy systems where migration is practically impossible, Docker remains the only solution.
 - For starting new from ground up, Podman serves as the right focal point that reduces migration needs in future.
 
-Moving forward, this resource will focus primarily on Podman. While we hope to introduce Docker support down the road, our current priorities have been optimized for Podman's ecosystem.
+Moving forward, this resource will focus primarily on Podman and rpm based operating systems. We hope to introduce support for others down the road.

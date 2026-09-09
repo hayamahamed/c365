@@ -7,8 +7,7 @@ icon: simple/linuxcontainers
 ## Introduction
 
 <figure markdown="span">
-    ![linuxcontainers](https://cdn.simpleicons.org/linuxcontainers/3a76d6){ width="300" }
-    <figcaption>F1: Linux Container</figcaption>
+    ![containers](img/mascot.svg){ width="600" }
 </figure>
 
 A container is a sandboxed runtime environment on Linux systems. The sandbox is constructed using the utilities present in the Linux kernel. Software running in this sandbox share the kernel with the host it is running on, but the certain aspects of kernel that store the machine state are abstracted through namespaces to allow the isolated or the container environments to have a different state than the host even though they are sharing the same kernel.
@@ -57,9 +56,9 @@ A[Linux Kernel] --> B[
 OverlayFS]
 ```
 
-_F2: Rough Architecture of container system_
+_Diagram 1: Rough Architecture of container system_
 
-In F2 above, the sandboxed container environment can be seen as the last third box. The middle box holds the container primitives and they are as follows:
+In Diagram 1 above, the sandboxed container environment can be seen as the last third box. The middle box holds the container primitives and they are as follows:
 
 | Container Primitives | Explanation                                                                                                                                                                                                                               |
 | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

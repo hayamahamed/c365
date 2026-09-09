@@ -1,8 +1,8 @@
 ---
-icon: lucide/rocket
 hide:
   - toc
   - path
   - navigation
+  - nav
 template: "index.html"
 ---
