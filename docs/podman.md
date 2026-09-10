@@ -168,7 +168,7 @@ bfdd7ca04f23  quay.io/almalinuxorg/almalinux:latest  sleep infinity  30 hours ag
 
 ### Create
 
-As you know, containers' image layer is immutable after creation. It is mandatory to add needed configuration while / before creating the container by adding tags to the command itself or any otherway which will be covered later.
+As you know, containers' image layer is immutable after creation. It is important to add needed configuration while / before creating the container by adding tags to the command itself or any otherway which will be covered later.
 
 ```
 podman create \
@@ -247,7 +247,7 @@ Most of the time, a single port isn't enough so we can give a range of ports (al
 
 6.`-v $HOME/temp:/misc:z`
 
-It maps the host volume temp with a volume inside the container as misc in its root dir. It is mandatory to use the absolute path for container's volumes (as starting from root).
+It maps the host volume temp with a volume inside the container as misc in its root dir. It is important to use the absolute path for container's volumes (as starting from root).
 
 Things after : is considered tag/s and Z and z are SELinux specific tags used to fix permission issues. the `:Z` tag means the podman performs a private, recursive relabeling of the host directory specified in the volume which is home here. Also theres a `:z` tag to which the Podman Recursively changes the SELinux context of the host directory to a shared container label (container_file_t). Use this when multiple containers need to read and write to the same host path simultaneously.
 
