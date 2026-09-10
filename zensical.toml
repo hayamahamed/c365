@@ -19,10 +19,8 @@ nav = [
         { "Docker & Podman" = "docker-podman.md" },
     ]},
     { " Work With Containers" = [
-        {
-        "Podman Containers" = [
-            { "Podman 101" = "podman.md" },
-        ]},
+
+        { "Podman 101" = "podman.md" },
     ]},
     { "Containers Architecture" =  [
         { "Architecture" = "architecture.md" },

@@ -7,6 +7,8 @@ tags:
 
 # Podman 101
 
+[How to create, start, and run a container in a single line of command.](#create-start-and-run)
+
 Containers under the control of Podman can either be run by root or by a non-privileged user. Podman manages the entire container ecosystem which includes pods, containers, container images, and container volumes using the libpod library. Podman, by default, creates rootless containers.
 
 ## Managing a container
@@ -19,54 +21,12 @@ To manage a container, the order should be as follows,
 - Start the container
 - Open a shell that can access the container
 
-??? info "How to create, start, and use a container in a single command"
-
-    All of these can be done in a single line
-
-    ```
-    podman run -it quay.io/almalinuxorg/almalinux
-    ```
-
-    ```{ .yaml .no-copy }
-    Trying to pull quay.io/almalinuxorg/almalinux:latest...
-    Getting image source signatures
-    Copying blob 653c5d8d0d66 done   |
-    Copying config de2f7b8674 done   |
-    Writing manifest to image destination
-    [root@fe6752c332b3 /]#
-    ```
-
-    It does three jobs
-
-    - Pulls the container image from the url quay.io/almalinuxorg/almalinux if it isn't present locally.
-    - Creating a container using that image if it isn't created before.
-    - Running the container in an integrated terminal (letting us work inside the container)
-
-    The problem is it will create a container with hostname and container name that is hard to keep track of.
-    It is always recommended to atleast give the container a name that resembles its existence.
-
-    ```
-    podman run --hostname abc --name xyz -it quay.io/almalinuxorg/almalinux
-    ```
-
-    This line does the same job `podman run -it quay.io/almalinuxorg/almalinux`, but adds host name for the container as abc and the container name for the container as xyz which we use to access and manage the container.
-
-    This is the fastest way to get a working container. It can also be stacked with many more arguments to customize. It is discouraged to use it until one gets the optimal understanding of how to work with the containers.
-
-## Creating a container
-
-Creating a container is primarily consist of three parts
-
-- Search for the image across registries
-- Get the appropriate container image to use
-- Use it to create a container
-
-### Images
+## Images
 
 Container images are unchanging static files that hold executable code and operate in isolation.
 A container image assembles all the components needed to create a container on an operating system, and it comprises different image layers stacked on top of each other. Container images are immutable.
 
-#### Search in registries
+### Search in registries
 
 Container images are primarily searched on registries.
 
@@ -104,7 +64,7 @@ quay.io/containerdisks/almalinux            # Almalinux Containerdisk Images  <i
 ...
 ```
 
-#### Pull
+### Pull
 
 The url from the `podman search` can be used to get the container image (to local storage) using `podman pull`.
 
@@ -123,7 +83,7 @@ de2f7b867468d83dcc57f1ed18177debebabb064a42134067cdc9a3a2cd36536
 
 As you may see, since no tag's specified it default to latest.
 
-#### Search on disk
+### Search on disk
 
 To search the images present locally, either `podman images` or `podman image ls` can be used as both returns the same results.
 
@@ -144,9 +104,9 @@ This will show the images available locally along with,
 
 Note that the created date doesn't come from when we pull but from when the container image is built.
 
-#### Delete
+### Delete
 
-Image ID, the whole url, or the name of an image can be used to remove it. The name is the rest part excluding the domain (such as quay.io) or localhost. Unless specified by the image ID, the tag is necessary or it will defaults to `:latest` just like podman pull. Here, it is recommended to either use the whole url with the tag or the image ID to avoid unecessary troubles.
+Image ID, the whole url, or the name of an image can be used to remove the specific image. The name is the rest part excluding the domain (such as quay.io) or localhost. Unless specified by the image ID, the tag is necessary or it will defaults to `:latest` just like podman pull. Here, it is recommended to either use the whole url with the tag or the image ID to avoid unecessary troubles.
 
 A locally stored image can be deleted or removed via `podman image rm`.
 
@@ -174,9 +134,11 @@ _$ is just a placeholder to indicate its a command, not an STDOUT printed to ter
 
 We will learn more about images, how we build, and related things later.
 
-### Containers
+## Containers
 
-#### Search
+To work with containers, either its name or the container ID can be used.
+
+### Search
 
 To be precise, Podman has no search for containers like for images but, it can list the containers.
 
@@ -204,7 +166,7 @@ CONTAINER ID  IMAGE                                  COMMAND         CREATED    
 bfdd7ca04f23  quay.io/almalinuxorg/almalinux:latest  sleep infinity  30 hours ago  Up 14 minutes      0.0.0.0:8080->8080/tcp  cn
 ```
 
-#### Create
+### Create
 
 As you know, containers' image layer is immutable after creation. It is mandatory to add needed configuration while / before creating the container by adding tags to the command itself or any otherway which will be covered later.
 
@@ -226,39 +188,40 @@ podman create \
 The numerical string that comes as the output is a hex hash / container ID that can be used to access the container instead of using the container name.
 The hex hash is based on the combination of random data, timestamp, and host info, so the hash is almost always unique to one another.
 
+The above create command creates a writable container layer over the specified image and prepares it for running the specified command. The container ID is then printed to STDOUT (Usually the output in the terminal unless used in programs for different purposes). This is similar to podman run -d except the container is never started. Now, the `podman start container` command can be used to start the container at any point.
+
+_The slashes (`\`) in the command solely used for writing commands in a smaller width._
+
 ###### info
 
-??? info
+??? info "regarding the container ID / hex hash"
 
     To access the container, The whole hash or the container ID of it is not necessary but, it must be in the length in which the the hash can be idenified distinctly from the others. The hash / ID must start from the first character and can go all the way upto all 52 chars depending on the need/s.
 
     `f07` as the ID can not be used if two or more hashes start with `f07`.
 
-    !!! example
+    Ex.
 
-          If there're three hashes as <br>
-            - `27abf265efc3d94996f8ada17abcd742fcab95a3f59fc67897cd5ea18725fcf5` <br>
-            - `27af40ca73ec600cc7cc0a7d80c68f178bff2ccdbc34e5f11b7db86d28cf5601` <br>
-            - `27af4001d44e3774f7c5715f59a5ee76c47829c565b9bc273671d8ee012d206c` <br>
+    If there're three hashes as <br>
 
-           You'd have to atleast use the hash like 27af400 as the hash isn't presented in more than one hash. Most of the times, using first few chars to a 12 is enough.
+    - `27abf265efc3d94996f8ada17abcd742fcab95a3f59fc67897cd5ea18725fcf5` <br>
+    - `27af40ca73ec600cc7cc0a7d80c68f178bff2ccdbc34e5f11b7db86d28cf5601` <br>
+    - `27af4001d44e3774f7c5715f59a5ee76c47829c565b9bc273671d8ee012d206c` <br>
 
-The above create command creates a writable container layer over the specified image and prepares it for running the specified command. The container ID is then printed to STDOUT (Usually the output in the terminal unless used in programs for different purposes). This is similar to podman run -d except the container is never started. Now, the `podman start container` command can be used to start the container at any point.
-
-The slashes (`\`) in the command solely used for writing commands in a smaller width.
+           You'd have to atleast use the hash as 27af400 as it is not present in more than a single hash. Most of the times, using first few chars to a 12 is enough.
 
 The command Argument/s and the reason to use it.
 
-| No  | Arg/s                                   | Reason                                                                            |
-| --- | --------------------------------------- | --------------------------------------------------------------------------------- |
-| 1   | `podman create`                         | It prepares to create a container                                                 |
-| 2   | `--name container_name`                 | It gives the container the name "container_name"                                  |
-| 3   | `--hostname container_hostname`         | It gives the container the hostname "container_hostname"                          |
-| 4   | `--userns=keep-id  `                    | It maps the host UID with container UIDs to omit ownership conflicts              |
-| 5   | `-p 8080:8080`                          | It maps the localhost:8000 containers localhost:8000                              |
-| 6   | `-v $HOME:$HOME:z`                      | It maps the host volume home with a volume inside container as home.              |
-| 7   | `quay.io/almalinuxorg/almalinux:latest` | This shows what image to use for the container.                                   |
-| 8   | `sleep infinity`                        | This keeps the container alive by letting it sleep for infinitely long time. |
+| No  | Arg/s                                   | Reason                                                                                   |
+| --- | --------------------------------------- | ---------------------------------------------------------------------------------------- |
+| 1   | `podman create`                         | It prepares to create a container                                                        |
+| 2   | `--name container_name`                 | It gives the container the name "container_name"                                         |
+| 3   | `--hostname container_hostname`         | It gives the container the hostname "container_hostname"                                 |
+| 4   | `--userns=keep-id  `                    | It maps the host UID with container UIDs to omit ownership conflicts                     |
+| 5   | `-p 8080:8080`                          | It maps the localhost:8000 containers localhost:8000                                     |
+| 6   | `-v $HOME/temp:/misc:z`                 | It maps the host volume temp with a volume inside the container as misc in its root dir. |
+| 7   | `quay.io/almalinuxorg/almalinux:latest` | This shows what image to use for the container.                                          |
+| 8   | `sleep infinity`                        | This keeps the container alive by letting it sleep for infinitely long time.             |
 
 1.`podman create`
 
@@ -282,13 +245,13 @@ As stated above, it maps the port 8080 if host with 8080 of the container. by de
 
 Most of the time, a single port isn't enough so we can give a range of ports (along with specific ports if needed) as `-p 8000-9000:8000-9000`. It's not necessary to only have a single publishing arg (-p) in the command. Multiple -p args can be stacked together like `-p 8000-9000:8000-9000 -p 43:43 -p 127.0.0.1:9001:9001`. In fact, It's almost always done like this.
 
-6.`-v $HOME:$HOME:z`
+6.`-v $HOME/temp:/misc:z`
 
-It mapes the home volume of the host with a new directory inside the container as home's name on host
+It maps the host volume temp with a volume inside the container as misc in its root dir. It is mandatory to use the absolute path for container's volumes (as starting from root).
 
 Things after : is considered tag/s and Z and z are SELinux specific tags used to fix permission issues. the `:Z` tag means the podman performs a private, recursive relabeling of the host directory specified in the volume which is home here. Also theres a `:z` tag to which the Podman Recursively changes the SELinux context of the host directory to a shared container label (container_file_t). Use this when multiple containers need to read and write to the same host path simultaneously.
 
-Without a tag podman defaults to :rw (read and write). Even after adding SELinux tag, Podman will still use :rw unless configured as :ro (read-only) or something else. Multiple tags can be added using a simple comma `,` like `-v $HOME:$HOME:z,rw`.
+Without a tag podman defaults to :rw (read and write). Even after adding SELinux tag, Podman will still use :rw unless configured as :ro (read-only) or something else. Multiple tags can be added using a simple comma `,` like `-v $HOME/temp:/misc:z,rw`.
 
 As stated, these are SELinux specific making it not work properly on systems that has no SELinux such as Ubuntu and Debian.
 !!! warning
@@ -317,18 +280,141 @@ It gives Podman the image to use. You can either use the repository name like th
 
 8.`sleep infinity`
 
-Usually containers stop right after the last proc inside it ends making it stop right after starting the container so `sleep infinity` makes it stay alive forever. You can also specify the time it should be kept alive after the last process end by replacing the infinity with a number that reflects the needed time it needs to stay alive in seconds (ie. `sleep 600` means stay alive for 600 sec or 6 min)
+Usually containers stop right after the last proc inside it ends making it stop right after starting the container so `sleep infinity` makes it stay alive forever. You can also specify the time it should be kept alive after the last process end by replacing the infinity with a number that reflects the time it needs to stay alive in seconds (ie. `sleep 600` means stay alive for 600 sec or 6 min)
 
-#### Start
+### Start
 
-Now the container's created. It can be started via podman
+Now the container's created. It can be started by podman `podman start` and stopped `podman stop`
 
-## Use
+```
+podman start container_name
+```
 
-## Deleting a container
+```{.yaml .no-copy}
+container_name
+```
 
-## Deleting a container image
+If it is started successfully, It will STDOUT the container_name.
 
+### Stop
+
+Only the started containers can be stoped. Vice versa.
+
+```
+podman stop container_name
+```
+
+```{.yaml .no-copy}
+WARN[0010] StopSignal SIGTERM failed to stop container container_name in 10 seconds, resorting to SIGKILL
+container_name
+```
+
+It will try to stop the container using SIGTERM. If it could not accomplish it in 10 seconds, It will use SIGKILL[^1].
+
+It defaults to 10 second delay to launch SIGKILL. It can be customised via a flag `-t` / `--time` in the command `podman stop` as follows,
+
+```
+podman stop -t 20 container_name
+```
+
+```{.yaml .no-copy}
+WARN[0020] StopSignal SIGTERM failed to stop container container_name in 20 seconds, resorting to SIGKILL
+container_name
+```
+
+If the container has to be stopped immediately (using SIGKILL), `podman kill` can be used as follows,
+
+```
+podman kill container_name
+```
+
+```{.yaml .no-copy}
+container_name
+```
+
+As it kills immediately, it does not take the `--time` flag.
+
+### Use
+
+To use a container, it must be running such in a way as [`podman start`](#Start-and-stop).
+
+```
+podman exec -it container_name sh
+```
+
+```{.yaml .no-copy}
+sh-5.2$
+```
+
+The `-i` tags give an interactive shell the `-t` tag gives a terminal in which we get the interactive shell.
+
+_sh as the shell is used to enter into container here but, you can use the Linux shell of your favourite._
+
+### Delete
+
+Only the created containers can be deleted.
+
+```
+podman rm container_name
+```
+
+```{.yaml .no-copy}
+container_name
+```
+
+When you try to delete a runnig container
+
+```
+podman rm container_name
 ```
 
 ```
+Error: cannot remove container 2b76e73ae5366148493c841e0980b41fa53c4e28710d581dcb56d8c19d764055 as it is running - running or paused containers cannot be removed without force: container state improper
+
+```
+
+The `-f` or `--force` tag is used to force remove a container as follows,
+
+```
+podman rm -f container_name
+```
+
+```{.yaml .no-copy}
+WARN[0010] StopSignal SIGTERM failed to stop container container_name in 10 seconds, resorting to SIGKILL
+container_name
+```
+
+The `-f` tag first runs `podman stop` and then `podman rm`. That's why `podman stop` STDOUT was printed.
+
+### Create, Start, and Run
+
+A podman container can be created, started, and run in a single command as follows,
+
+```
+podman run --hostname abc --name xyz -it quay.io/almalinuxorg/almalinux:latest
+```
+
+```{.yaml .no-copy}
+Trying to pull quay.io/almalinuxorg/almalinux:latest...
+Getting image source signatures
+Copying blob 653c5d8d0d66 done   |
+Copying config de2f7b8674 done   |
+Writing manifest to image destination
+[root@abc /]#
+```
+
+The `-it` gives a shell to access the container right inside the terminal the `podman run` ran.
+
+If it is required to do this without getting a terminal, the `-d` tag can be used instead of `-it` to let the container run in background.
+
+## Limitations
+
+While this is an architectural design, Podman commands executed as root are routed exclusively to the rootful runtime, whereas commands executed by unprivileged users are handled entirely within the rootless one.
+
+Operating a hybrid environment that mixes rootful and rootless Podman runtimes in an un-achitectural way introduces a significant operational overhead as these utilize distinct storage pathways and isolated user namespaces, managing them like that leads to data isolation, container fragmentation, and permission conflicts. To ensure environment predictability and stability, Standardizing a single execution mode is reccomended
+
+Next up, we will be seeing how to make a distrobox[^2] out of Podman. Stay tuned !.
+
+[^1]: SIGTERM and SIGKILL are system signals used to stop running processes. SIGTERM (Signal 15) asks nicely and SIGKILL (Signal 9) force closes the program.
+
+[^2]: Distrobox is a tool that allows a container to be run as if its the host with full integration of home directory as its home, graphics, sound, network, and USB devices.
