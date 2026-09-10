@@ -216,7 +216,7 @@ podman create \
   -p 8080:8080 \
   -v $HOME:$HOME:z \
   quay.io/almalinuxorg/almalinux:latest \
-  sleep-infinity
+  sleep infinity
 ```
 
 ```{ .yaml .no-copy }
@@ -258,7 +258,7 @@ The command Argument/s and the reason to use it.
 | 5   | `-p 8080:8080`                          | It maps the localhost:8000 containers localhost:8000                              |
 | 6   | `-v $HOME:$HOME:z`                      | It maps the host volume home with a volume inside container as home.              |
 | 7   | `quay.io/almalinuxorg/almalinux:latest` | This shows what image to use for the container.                                   |
-| 8   | `sleep-infinity`                        | This keeps the container alive even if no process is running inside (if started). |
+| 8   | `sleep infinity`                        | This keeps the container alive by letting it sleep for infinitely long time. |
 
 1.`podman create`
 
