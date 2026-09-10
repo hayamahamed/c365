@@ -10,20 +10,18 @@
 {% block content %}
 <div>
     <style>
-        main {
-            width: 100%;
-            background-image: url(img/mascot.svg);
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
+        * {
+            scrollbar-width: none;
+            overflow-y: hidden;
         }
-        .hello {
-            filter: invert(0.5);
+
+        h1 {
+            color: #f1f1f1 !important;
         }
         p {
             max-width: 500px;
             font-size: 17px;
-
+            color: #f1f1f1 !important;
             line-height: 1.45;
         }
 
@@ -82,8 +80,26 @@
         .md-footer {
             display: none;
         }
+
+        .bg-iframe {
+            z-index: -2;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
     <div class="main-ow">
+        <div class="bg-iframe" aria-hidden="true">
+            <iframe src="attractor/index.html"></iframe>
+        </div>
         <h1>C365</h1>
 
         <p>A comprehensive archive about container technology</p>
