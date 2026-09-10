@@ -2,8 +2,6 @@
 icon:
 ---
 
-**Glossaries**
-
 ## Terms
 
 ### API
