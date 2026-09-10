@@ -57,6 +57,19 @@ dnf install -y buildah
 
 Some of the distributions may utilize a different resolver for rpm packages such as SUSE uses zypper, Fedora Atomic uses rpm-ostree.
 
+## General Info
+
+!!! info
+
+    Almost all packages' commands come with man page and help page.
+
+      - Man page is a detailed manual which can be accessed using `man COMMAND`
+      - Help page lists how to use each commands and the arguments it can take which can be accessed using `COMMAND -h`.
+
+    It is encouraged to read each command's man page and help page to solidy the fundementals of one on their own.
+
+!!! info "When greeted by an unknown terminology, read the footnotes and the [glossaries](glossary) before proceeding."
+
 [^1]: systemd is a system and service manager for Linux operating systems that starts and controls user-space processes after the kernel boots. systemd is a modern replacement for the traditional sysvinit (SysV init) process. While it replaces the old sysvinit system, it retains compatibility with legacy SysV init scripts in most configurations, allowing older software to boot seamlessly alongside modern systemd services.
 
 [^2]:
