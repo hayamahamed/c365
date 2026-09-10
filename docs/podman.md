@@ -174,7 +174,7 @@ _$ is just a placeholder to indicate its a command, not an STDOUT printed to ter
 
 We will learn more about images, how we build, and related things later.
 
-### Search, Create, Start, and Use
+### Containers
 
 #### Search
 
