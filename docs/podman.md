@@ -104,7 +104,7 @@ quay.io/containerdisks/almalinux            # Almalinux Containerdisk Images  <i
 ...
 ```
 
-#### Pull image
+#### Pull
 
 The url from the `podman search` can be used to get the container image (to local storage) using `podman pull`.
 
