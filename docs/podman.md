@@ -1,11 +1,11 @@
 ---
-icon: simple/podman
+icon: lucide/box
 tags:
   - basic
   - 101
 ---
 
-# Podman 101
+# Introduction to Podman
 
 [How to create, start, and run a container in a single line of command.](#create-start-and-run)
 
@@ -336,7 +336,7 @@ As it kills immediately, it does not take the `--time` flag.
 
 ### Use
 
-To use a container, it must be running such in a way as [`podman start`](#Start-and-stop).
+To use a container, it must be running such in a way as [`podman start`](#start).
 
 ```
 podman exec -it container_name sh
@@ -413,8 +413,8 @@ While this is an architectural design, Podman commands executed as root are rout
 
 Operating a hybrid environment that mixes rootful and rootless Podman runtimes in an un-achitectural way introduces a significant operational overhead as these utilize distinct storage pathways and isolated user namespaces, managing them like that leads to data isolation, container fragmentation, and permission conflicts. To ensure environment predictability and stability, Standardizing a single execution mode is reccomended
 
-Next up, we will be seeing how to make a distrobox[^2] out of Podman. Stay tuned !.
+Next up, we will be seeing how to make a distrobox[^2] using Podman.
 
 [^1]: SIGTERM and SIGKILL are system signals used to stop running processes. SIGTERM (Signal 15) asks nicely and SIGKILL (Signal 9) force closes the program.
 
-[^2]: Distrobox is a tool that allows a container to be run as if its the host with full integration of home directory as its home, graphics, sound, network, and USB devices.
+[^2]: Distrobox is a tool that allows a container to be run as if its the host with full integration of host's home directory as its home, graphics, sound, network, and USB devices.

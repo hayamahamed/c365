@@ -20,7 +20,8 @@ nav = [
     ]},
     { " Work With Containers" = [
 
-        { "Podman 101" = "podman.md" },
+        { "Introduction to Podman" = "podman.md" },
+        { "Building Distrobox in Podman" = "distrobox.md" },
     ]},
     { "Containers Architecture" =  [
         { "Architecture" = "architecture.md" },

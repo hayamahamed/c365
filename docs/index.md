@@ -1,5 +1,6 @@
 ---
 hide:
+  - navigation
 
 template: "index.html"
 ---
