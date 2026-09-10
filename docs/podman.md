@@ -5,8 +5,6 @@ tags:
   - 101
 ---
 
- _Only the required depth for each command / use case will be covered. It is expected to get assistance from manpage and help page[^1]._ 
-
 # Podman 101
 
 Containers under the control of Podman can either be run by root or by a non-privileged user. Podman manages the entire container ecosystem which includes pods, containers, container images, and container volumes using the libpod library. Podman, by default, creates rootless containers.
@@ -334,5 +332,3 @@ Now the container's created. It can be started via podman
 ```
 
 ```
-
-[^1]: manpage and help page are the two primary way to get the specific command's documentation. <br> man is accessed using the command `man` as _man command_ and help is `--help` / `-h` as _command -h_ .
