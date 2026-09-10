@@ -5,7 +5,7 @@ tags:
   - 101
 ---
 
-!!! success "Only the required depth for each command / use case will be covered. It is expected to get assistance from manpage and help page[^1]. "
+ _Only the required depth for each command / use case will be covered. It is expected to get assistance from manpage and help page[^1]._ 
 
 # Podman 101
 
