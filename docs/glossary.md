@@ -1,7 +1,5 @@
 ---
 icon:
-hide:
-  - navigation
 ---
 
 **Glossaries**

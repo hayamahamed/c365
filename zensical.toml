@@ -17,6 +17,8 @@ nav = [
     { "General" =  [
         { "Linux Containers" = "containers.md" },
         { "Docker & Podman" = "docker-podman.md" },
+        { "Setup" = "setup.md" },
+        { "Glossaries" = "glossary.md" },
     ]},
     { " Work With Containers" = [
 
@@ -27,7 +29,6 @@ nav = [
         { "Architecture" = "architecture.md" },
 
     ]},
-    { "Glossaries" = "glossary.md" },
 
 ]
 
