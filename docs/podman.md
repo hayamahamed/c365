@@ -5,7 +5,7 @@ tags:
   - 101
 ---
 
-!!! success "C365, at its final form, will be fully self-contained when combined with manpage and help page. Only the required depth for each command / use case will be covered. It is expected to get assistance from manpage and help page[^1]. "
+!!! success "Only the required depth for each command / use case will be covered. It is expected to get assistance from manpage and help page[^1]. "
 
 # Podman 101
 
