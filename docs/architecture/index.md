@@ -14,7 +14,7 @@ Ensure you have read and understood [Linux Containers](../general/containers) an
 
 Ensure you can use the [Glossaries](../general/glossary) from general to look after foreign terms.
 
-## Fundemantal
+## Fundamental
 
 ```mermaid
 graph LR

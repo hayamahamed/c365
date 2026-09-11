@@ -66,7 +66,7 @@ Some of the distributions may utilize a different resolver for rpm packages such
       - Man page is a detailed manual which can be accessed using `man COMMAND`
       - Help page lists how to use each commands and the arguments it can take which can be accessed using `COMMAND -h`.
 
-    It is encouraged to read each command's man page and help page to solidy the fundementals of one on their own.
+    It is encouraged to read each command's man page and help page to solidy the fundamentals of one on their own.
 
 !!! info "When greeted by an unknown terminology, read the footnotes and the [glossaries](glossary) before proceeding."
 
