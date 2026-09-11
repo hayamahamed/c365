@@ -35,36 +35,14 @@ Containers should aim to preserve the normal system interface while changing wha
 ## Architecture
 
 ```mermaid
-graph LR
-A[Linux Kernel] --> B[
-      cgroups
-      pid_ns
-      pic_ns
-      net_ns
-      uts_ns
-      mnt_ns
-      user_ns
-      seccomp
-] --> C[Application running on
-OverlayFS]
+graph RL;
+    A[Container N]-->C[Container Runtime]
+    B[Container X]-->C[Container Runtime]
+    C[Container Runtime]--> D[Host OS]
 ```
 
-_Diagram 1: Rough Architecture of container system_
-
-In Diagram 1 above, the sandboxed container environment can be seen as the last third box. The middle box holds the container primitives and they are as follows:
-
-| Container Primitives | Definitions                                                                                                                                                                                                                               |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| cgroups              | cgroup allows putting limits on a process and its children. Commonly used for limiting CPU and RAM usage. cgroups are technically optional for containers. However, you may need it in production.                                        |
-| pid_ns               | The PID namespace (pid_ns) allows a process and its children to run in a new process tree that maps back to the host process tree.                                                                                                        |
-| pic_ns               | The Inter-Process Communication Namespace (ipc_ns) limits the processes ability to share memory.                                                                                                                                          |
-| net_ns               | The Network Namespace (net_ns) allows a new network stack to exist in the sandbox. This means our sandboxed environment can have its own network interfaces, routing tables, DNS lookup servers, IP addresses, and etc…​ you name!        |
-| uts_ns               | Ironic as it is, The Unix Time Sharing Namespace (uts_ns) exists purely to isolate the system identity strings. This allows a container to assign its own hostname without conflicting with the host.                                     |
-| mnt_ns               | The Mount Namespace (mnt_ns) is the part of the kernel that stores the mount table. When the sandboxed environment runs in a new Mount Namespace, it can mount filesystems not present on the host. This is very important as you’ll see. |
-| user_ns              | The User Namespace (user_ns) the sandboxed environments to have its own set of user and group IDs that will map to unique user and group IDs back on the host system.                                                                     |
-| seccomp              | seccomp is a utility acts as a filter for kernel calls. This allows us to drop Kernel capabilities in the sandboxed environment. Utilizing seccomp is also not strictly vital to containers.                                              |
-
-We will be learning more about in [achitecture](architecture).
+A Container Runtime sits between the containers and the host. It uses the primitives found on the host to create the containers. Detailed architecture is available at [
+Containers Architecture](../architecture)
 
 ## Containers, images, and registries
 
@@ -78,9 +56,31 @@ We will be learning more about in [achitecture](architecture).
 | Container[^2] | A runnable instance of an image.                                                                          |
 | Registry[^3]  | A centralized system for storing, managing, and distributing container images and OCI compliant artifacts |
 
-## Creating a container
+To create a container, a container image is used.
 
-To create a container, a container image is used. The contents of this image file are duplicated into the sandboxed environment as the root filesystem using OverlayFS and chroot. There are many strategies for mounting the root filesystem in the container, but OverlayFS is quite the common one.
+??? tip "The Container Story"
+
+     This is, in a nutshell, the story[^2].
+
+    ```mermaid
+    quadrantChart
+        x-axis First Movers --> Second Movers
+        y-axis New Tech --> Known Tech
+        quadrant-1 Depends
+        quadrant-2 No risk but rewarding
+        quadrant-3 Riskiest & most rewarding
+        quadrant-4 Depends
+        Podman: [0.3, 0.6]
+        Flinch: [0.57, 0.69]
+        Rkt: [0.78, 0.34]
+        Docker: [0.40, 0.34]
+    ```
+
+    Old technology is determined by the new technology's underlying primitives that were matured/standardized as time went.
+
+    Depends: _First Mover ∝ 1 / Second Mover_ . If first mover was great and self-contained enough, the second one wouldn't have had the chance.
+
+    Note: This is not a scientifically validaded statement, but a rhetorial theory.
 
 [^1]: Apple has its developer tool called container. It allows Mac users to create and run Linux containers using lightweight virtual machines on MacOS without needing for a third party. However, MacOS only offers Linux Container Utilities. There's no Mac containers.
 

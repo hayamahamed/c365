@@ -6,7 +6,7 @@ icon: lucide/layers
 
 !!! info "Note"
 
-    To use and manage containers, you do not need to learn about the underlying architecture. You may start from [Work With Containers](../work-with-containers)
+    To use and manage containers, you do not need to learn about the underlying architecture. You may start from [Work With Containers](../work-with-containers), fully omitting the architecture side.
 
 ## Prequisites
 
