@@ -34,7 +34,7 @@ In the host, chances are any of a directory inside the home is owned by a differ
 
 `:U` on a volume mount tells Podman to chown the mounted content (recursively) so its ownership matches the UID/GID that the container's process actually sees.
 
-You may wonder, what if a container used `:Z`, the private SELinux label on the dir. We will just use `:z` along with `:U` as `:U,z` which will overwrite the older `:Z` from somewhere
+You may wonder, what if a container used `:Z`, the private SELinux label on a directory. We will just use `:z` along with `:U` as `:U,z` which will overwrite the older `:Z` from somewhere
 
 ### Display
 

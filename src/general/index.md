@@ -2,9 +2,11 @@
 icon:
 ---
 
-# Linux Containers
+# General
 
-## Introduction
+## Linux Containers
+
+### Introduction
 
 <figure markdown="span">
     ![containers](../img/mascot.svg){ width="600" }
@@ -32,7 +34,7 @@ Containers should aim to preserve the normal system interface while changing wha
 
     But malware can also do this to determine whether it is in a sandbox.
 
-## Architecture
+### Architecture
 
 ```mermaid
 graph RL;
@@ -44,7 +46,7 @@ graph RL;
 A Container Runtime sits between the containers and the host. It uses the primitives found on the host to create the containers. Detailed architecture is available at [
 Containers Architecture](../architecture)
 
-## Containers, images, and registries
+### Containers, images, and registries
 
 !!! info
 
@@ -81,6 +83,44 @@ To create a container, a container image is used.
     Depends: _First Mover ∝ 1 / Second Mover_ . If first mover was great and self-contained enough, the second one wouldn't have had the chance.
 
     Note: This is not a scientifically validaded statement, but a rhetorial theory.
+
+## Mainstream Container Technologies
+
+There were countless container technologies with fundamentally different architectures for Linux. As the industries evolved, only few left alive. Docker and Podman became the main stream.
+
+### Docker
+
+Docker uses a daemon-based model (dockerd). It manages containers and related using the persistent background server (daemon) called docker. And this daemon-based model design makes the container lifecycle management straightforward but, at the same time, creates a single point of failure. If the daemon stops, every container it manages stops with it. The daemon usually runs with root privileges, which then raises security considerations in environments with strict compliance requirements.
+
+### Podman
+
+Podman uses a fork-exec model. It manages containers by a two step process (fork-exec) that clones the existing process (called the parent) and overwrites it with a new program. It offers a way to run a container as a simple process like anything other without the need for a daemon or root. It primarily relies heavily on systemd and libpod library. Podman’s daemonless and inclusive architecture makes it an accessible, security-focused option for container management.
+
+### Comparison
+
+When we compare Docker and Podman, Docker is the first mover who's blessed with the network effect and Podman is the second mover who is blessed by the awarness of the first mover's mistakes.
+
+| Feature        | Podman                                  | Docker                                  | Verdict |
+| -------------- | --------------------------------------- | --------------------------------------- | ------- |
+| Architecture   | Daemonless (user processes only)        | Centralized daemon (dockerd)            | Podman  |
+| Security       | Rootless by default                     | root unless configured manually         | Podman  |
+| Performance    | Faster startup & lower memory footprint | Slower & heavier memory footprint       | Podman  |
+| Kubernetes     | Built-in pod model, YAML generator      | Compose/Buildx-based workflows          | Podman  |
+| Ecosystem      | Lightweight, OCI-native                 | Large community, Docker Hub integration | Depends |
+| Learning Curve | Docker-compatible                       | CLI Standard in most workflows          | Tie     |
+| Orchestration  | Kubernetes only                         | Swarm and Kubernetes                    | Docker  |
+
+### Backstory
+
+In 2013, Docker came and revolutionized how software was built and deployed. As Docker grew, it began adding features directly into the core engine (such as Swarm) which was opposed and resisted by the community, particularly, CoreOS, a company that specialized in building minimal, highly secure Linux operating systems for running containers at scale, So CoreOS designed Rkt with a fundamentally different architecture. It was what introduced the no-daemon architecture that can directly integrate with Linux init systems (especially well with systemd). This act fragmented the enter container ecosystem therefor, the Open Container Initiative (OCI) under the Linux Foundation formed that managed to get pieces from both the Docker and Rkt to build a standard called OCI standards that all containarization technologies follow now. Redhat acquired CoreOS in 2018 for a quater billion dollars. They created Podman out of the daemon less philosophy of Rkt owned by the CoreOS acquisation and the user friendly CLI of Docker. It gave podman the characteristics of _Rootless by default_, _Daemonless architecture_, and _First-Class Pods (a concept borrowed from kubernetes)_ .
+
+### Analogy
+
+While both tools share a similar feature set. Docker often resists structural changes to maintain backward compatibility whereas Podman freely adopts to modern needs.
+
+_legacy systems where migration is practically impossible, Docker remains the only solution._
+
+Moving forward, this resource will focus primarily on Podman and rpm based operating systems. We hope to introduce support for other platforms down the road. :heart:
 
 [^1]: Apple has its developer tool called container. It allows Mac users to create and run Linux containers using lightweight virtual machines on MacOS without needing for a third party. However, MacOS only offers Linux Container Utilities. There's no Mac containers.
 

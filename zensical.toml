@@ -17,14 +17,12 @@ nav = [
 
     { "Home" = "index.md" },
     { "General" =  [
-        { "Linux Containers" = "general/containers.md" },
-        { "Docker & Podman" = "general/docker-podman.md" },
+        { "General" = "general/index.md" },
         { "Setup" = "general/setup.md" },
         { "Glossaries" = "general/glossary.md" },
     ]},
     { " Work With Containers" = [
         { "Work With Containers" = "work-with-containers/index.md"},
-        { "Introduction to Podman" = "work-with-containers/podman.md" },
         { "Building Distrobox in Podman" = "work-with-containers/distrobox.md" },
     ]},
     { "Containers Architecture" =  [
