@@ -8,7 +8,8 @@ site_name = "C365"
 
 repo_url = "https://github.com/hayamahamed/c365"
 repo_name = "hayamahamed/c365"
-edit_uri = "https://github.com/hayamahamed/c365/tree/master/docs"
+edit_uri = "https://github.com/hayamahamed/c365/tree/master/src"
+docs_dir = "src"
 
 
 
