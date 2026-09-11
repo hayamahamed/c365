@@ -417,4 +417,4 @@ Next up, we will be seeing how to make a distrobox[^2] using Podman.
 
 [^1]: SIGTERM and SIGKILL are system signals used to stop running processes. SIGTERM (Signal 15) asks nicely and SIGKILL (Signal 9) force closes the program.
 
-[^2]: Distrobox is a tool that allows a container to be run as if its the host with full integration of host's home directory as its home, graphics, sound, network, and USB devices.
+[^2]: Distrobox is a synonym for container builds that run as fully integrated with host.
