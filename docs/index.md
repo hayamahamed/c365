@@ -1,6 +1,7 @@
 ---
 hide:
   - path
+  - navigation
 template: "index.html"
 ---
 
