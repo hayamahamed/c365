@@ -1,5 +1,5 @@
 ---
-icon: lucide/layers
+icon: lucide/drafting-compass
 ---
 
 # Architecture
@@ -75,4 +75,4 @@ cat /mnt/date
 cat: /mnt/date: No such file or directory
 ```
 
-It is because it was created in a temporary mount namespace and we left it using `exit`, so it is gone.
+As it was created in a temporary mount namespace, it is gone after `exit`.

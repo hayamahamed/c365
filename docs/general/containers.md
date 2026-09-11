@@ -7,7 +7,7 @@ icon:
 ## Introduction
 
 <figure markdown="span">
-    ![containers](img/mascot.svg){ width="600" }
+    ![containers](../img/mascot.svg){ width="600" }
 </figure>
 
 A container is a sandboxed runtime environment on Linux systems. The sandbox is constructed using the utilities present in the Linux kernel. Software running in this sandbox share the kernel with the host it is running on, but the certain aspects of kernel that store the machine state are abstracted through namespaces to allow the isolated or the container environments to have a different state than the host even though they are sharing the same kernel.

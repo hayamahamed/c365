@@ -1,5 +1,5 @@
 ---
-icon: lucide/box
+icon: lucide/blocks
 tags:
   - basic
   - 101

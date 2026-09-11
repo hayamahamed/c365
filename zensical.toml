@@ -1,5 +1,5 @@
 [project]
-site_url = "https://www.example.com/"
+site_url = "https://c365.pages.dev/"
 site_name = "C365"
 # site_description = "Your project description"
 # site_author = "Your name"
@@ -8,25 +8,26 @@ site_name = "C365"
 
 repo_url = "https://github.com/hayamahamed/c365"
 repo_name = "hayamahamed/c365"
-edit_uri = "https://github.com/hayamahamed/c365/main/docs/"
+edit_uri = "https://github.com/hayamahamed/c365/tree/master/docs"
 
 
 nav = [
 
     { "Home" = "index.md" },
     { "General" =  [
-        { "Linux Containers" = "containers.md" },
-        { "Docker & Podman" = "docker-podman.md" },
-        { "Setup" = "setup.md" },
-        { "Glossaries" = "glossary.md" },
+        { "Linux Containers" = "general/containers.md" },
+        { "Docker & Podman" = "general/docker-podman.md" },
+        { "Setup" = "general/setup.md" },
+        { "Glossaries" = "general/glossary.md" },
     ]},
     { " Work With Containers" = [
-
-        { "Introduction to Podman" = "podman.md" },
-        { "Building Distrobox in Podman" = "distrobox.md" },
+        { "Work With Containers" = "work-with-containers/index.md"},
+        { "Introduction to Podman" = "work-with-containers/podman.md" },
+        { "Building Distrobox in Podman" = "work-with-containers/distrobox.md" },
     ]},
     { "Containers Architecture" =  [
-        { "Architecture" = "architecture.md" },
+        { "Containers Architecture" = "architecture/index.md" },
+        { "Architecture" = "architecture/architecture.md" },
 
     ]},
 
