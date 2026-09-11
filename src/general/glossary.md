@@ -70,6 +70,12 @@ add(argument1, argument2)
 
 ```
 
+### Pwn
+
+A slang word to express dominating and defeating (someone or something). Online personas use "pwn" to describe annihilating an opponent, or owning them. The word came from misspelling "own" by typing quickly and hitting the letter P instead of the neighboring letter O. It often comes in gaming and cyber security contexts.
+
+Eg:
+
 ### Repository
 
 - Plural: Repositories
