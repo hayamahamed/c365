@@ -41,6 +41,6 @@ Chances are you will need a display to access a program. Linux primarily uses tw
 
 Fortunately, Podman also has display support for containers that we can use here.
 
-**We can dance with other challenges as we build. 😇**
+**We can work with other challenges as we build. 😇**
 
 ## Build
