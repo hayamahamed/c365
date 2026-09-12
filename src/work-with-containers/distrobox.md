@@ -6,47 +6,44 @@ icon: lucide/scan-box
 
 _Upon completion, you will have a project that reflects you can work with containers._
 
-## Understanding Distrobox
-
-A container that tightly integrates with the host os, allowing sharing of the HOME directory of the user, external storage, external USB devices and graphical apps (X11/Wayland), audio, and all ports in a way that the host and the container becomes indistuinguishable from each other.
-
 ## Goal
 
-- Build a rootless Distrobox using an AlmaLinux image.
+1. Build a rootless Distrobox using an AlmaLinux image.
+
 - Wrap it in a shell script that can be reproducible in any rpm based distro.
-- Experiment with both rpm and deb containers from a RHEL and a Debian images respectively.
+- Experiment with both rpm and deb containers from a RHEL and a Debian images.
 - Package it for rpm.
 
-## Challenges
+## Understanding Distrobox
 
-Rootless podman, unlike rootfull, has to be run with restrictions. Once again, that's by design, not a flaw.
+A container that tightly integrates with the host os, allowing sharing of the HOME directory of the user, external storage, external USB devices and graphical apps (X11/Wayland), audio, and all ports in a way that the host and the container becomes indistuinguishable from each other. When working towards it, few challenges will be encountered. We will solve it as we move.
 
-The main challenges are,
+- Privilledged Ports
 
-- Privilledged Ports binding
-- Devices & Sockets integration
+  Ports under 1024 are considered privilledged that rootless container can not bind directly as kernel blocks processes without `CAP_NET_BIND_SERVICE` from binding privilledged ports. Binding ports is what brings this issue. Thanks to podman's engineers, we have `--network host` that does not bind any port at all, but just uses host network directly.
 
-### Privilledged Ports
+!!! success "Sometimes, it is wiser to not tackle, but to sidestep, and advance. <br> - Hayam A."
 
-Ports under 1024 are considered privilledged that rootless container can not bind directly as kernel blocks processes without `CAP_NET_BIND_SERVICE` from binding privilledged ports.
+- Devices
 
-Binding ports is what brings this issue. Thanks to podman's engineers, we have `--network host` that does not bind any port at all, but just uses host network directly.
+A good thing is everything's exposed as files so, it is super easy to add & work with devices which shows in virtual `/dev` directory as if they are files.
 
-!!! success "Sometimes, it is wiser not to tackle. but to sidestep. and go by. <br> - Hayam A."
+Chances are you will need a display to access a program. Linux primarily uses two graphical displays, X11 and Wayland.
+Fortunately, Podman also has display support for containers that we can directly use.
 
-### Devices & Sockets
+- Security
 
-This is the important and the trickiest part, but a good thing is everything's exposed as files and directories therefor, it is not that hard.
+!!! warning "Disabling SELinux is one of the biggest security degrade and disabling SELinux for a container only gives the container unconfined access while keeping the system under the control of SELinux and it is also a security degrade, but with only the container as the degraded area."
 
-Chances are you will need a display to access a program. Linux primarily uses two graphical displays. One's older X11 and the other's modern Wayland. Almost all graphical program has perfect support for X11, and some greatly optimized app searches for Wayland for security concerns with fallback as X11.
+Security, especially SELinux, is one of the most important thing which rpm distributions renowned to have support for. If a container tries to run as if a host as it needs to get absolute control over the system, SELinux will conflict with it. We need to disable SELinux restrictions for the container first which can be done via the line `--security-opt label=disable` in `podman create`. It will create a container with unrestricted access. We can insepct the container using `podman inspect` that is piped to a JSON file.
 
-Fortunately, Podman also has display support for containers that we can use here.
+A tool called `ludica` can read the JSON file and creates an SELinux policy that allows what the distrobox needs and outputs a SELinux policy file that can be loaded as a SELinux module which will give distrobox the appropriate control from SELinux and restricting all other.
 
-**We can work with other challenges as we build. 😇**
+Now creating a new container will use that policy without needing to degrade the system security.
 
-### Choosing the right image
+## Choosing the right image
 
-Distroboxes need to run as if it is the host therefor, it needs to access system services. A special image type, init image, is required. The Init Image extends the base image, designed to run an init system as PID 1 for running multi-services inside a container.
+Distroboxes need to run as if it is the host therefor, it needs to access system services. A special image type, init image, is required. The Init Image extends the base image, designed to run an init system as PID 1 for running multi-(system)services inside a container.
 
 Since it has to be produced in a rpm based host, An Alma Linux 10 init image will be used as its default init service is systemd.
 
@@ -75,12 +72,8 @@ podman image ls
 
 ```{.no-copy .yaml}
 REPOSITORY                      TAG         IMAGE ID      CREATED      SIZE
-q̴̜̫̣̻̄̊̈́͐͒̍̇͂̚̕͜u̵̧̡͈̹̞̥͉̪̦͖͕͙͇͑̏̅̀̂͜͝ͅä̸̺͍́̓̉͒̅̊̓̃̅̎́͒̂͜ͅý̶̧̖̰̪͖͛̂̀ņ̶̧̦̪͍̲̭̏̓̄̿̊̽͐͛͑̿̋͝/̵̨̧̠̞̭͕̇h̷̨̖̘͇͔̜̭̣̱͈̩͚͚͍̯̊̀̔͗̈̍̈́̀̀͌̊̚̕̕ę̶̛̤͖̙̠̫̜̻̭̟̘̫͐̿̑̈́̈́̃̋͗͋̃l̴̫̫̊͂̍͌̓̽͛͊͌̅̋̊l̸̡̲̜̗͙̊͊̇̃̒͛̓̇̍̾͛̋͊̑͘ͅő̶̡̨̢̢̯͍̭̥͇͙͔̞̃̊̀͒̋̌͌̃̚͜ņ̶̧̦̪͍̲̭̏̓̄̿̊̽͐͛͑̿̋͝/̵̨̧̠̞̭͕̇h̷̨̖̘͇͔̜̭̣̱͈̩͚͚͍̯̊̀̔͗̈̍̈́̀̀͌̊̚̕̕ę̶̛̤͖̙̠̫̜̻̭̟̘̫͐̿̑̈́̈́̃̋͗͋̃l̴̫̫̊͂̍͌̓̽͛͊͌̅̋̊l̸̡̲̜̗͙̊͊̇̃̒͛̓̇̍̾͛̋͊̑͘ͅő̶̡̨̢̢̯͍̭̥͇͙͔̞̃̊̀͒̋̌͌̃̚͜.̶̠̻̟͕̟͖̘͔̟͙͈̔̏̋̈́̈̾̉̃̈́ȋ̵̧̩͎͍̱̳̮̲̠͓̲̘̻̆̐͐̓̾͜͜͝͠o̷̦̳͓̬͋̏́́̀̔̕͘͠/̵̛̛͓͉̟̱̻͓̯͙̫͖͙̖̄̋̋͘p̴̨̮͔̻̹͚̝̙̋o̷̻̬̥̹̗͎̳͈̳͓͔̬͈͋̓̍̇͐̈̈́̓̏̅̏́̚̚ͅḍ̸̗̥̩̆̓́͝m̸̢̳̳̳̘͈̩̻̱̎͌́̔ä̴̩̩̺̳̲̯̓͒͐ņ̶̧̦̪͍̲̭̏̓̄̿̊̽͐͛͑̿̋͝/̵̨̧̠̞̭͕̇h̷̨̖̘͇͔̜̭̣̱͈̩͚͚͍̯̊̀̔͗̈̍̈́̀̀͌̊̚̕̕ę̶̛̤͖̙̠̫̜̻̭̟̘̫͐̿̑̈́̈́̃̋͗͋̃l̴̫̫̊͂̍͌̓̽͛͊͌̅̋̊l̸̡̲̜̗͙̊͊̇̃̒͛̓̇̍̾͛̋͊̑͘ͅő̶̡̨̢̢̯͍̭̥͇͙͔̞̃̊̀͒̋̌͌̃̚͜ ̵̧̪̮͉͕̳̞̼̣͛ ̶̟̻̟̻̞̬͈̘͚̣̃̽̓̋̓̒͑̅͘̕͘ ̶̨͙̳͎̭͈̀̔̈̂ ̸̛͕̒̏̿̆̈́̈́͂̉͘͘ ̴̢̰̮̖̻̤̭̭͕̺̦͍͙̏̅̉̽̿̑̆̌͘̕͜͠͝ ̴̢̤̠͈͕̺̠̮̱̀͐̀͗̃̓́̓̒̚̕͘ ̷̥͖͖̯̻̝̝̝̥̲̟͕̫́͋̐͊̿ ̸̧͚̙͖̪̪͕̀ͅͅ ̴̡̛̪̝͓̮̦̳̰͈͓̭̮̹̈̽̃̈́̓̈̑͘ ̶̗͇̝̥̻̻͓̤̯͐͒̈́̆̀̎̓͊̕͝͝ͅͅ ̶̡̳̠̠̯̦̗͚̯͍̻̤̹̐̎͛͜ͅ ̸̝̪̫̻͌́̉̉̿̈̈́̈́͝͠ĺ̵̨͙̘̖̯̮͉̥̱͍̻̞͆̆͌́̃̍͛͐͂̂͂́͜ą̸̣͈̮̯̻̲̼̯̠̟̜̱̞̺̓͋͒̿̓̄͠͝ţ̷̝͓̱̟̳̬̠͇͕̹͗̒̓͋̽̐̕̚͝ͅe̶̺̹͔̟̾ͅs̷̨̢̘̜̭̜̤̱̣̬͈̦̘̓͋̓̎͛̿t̷̢̬̭̙̦̹̖̙̅̀́͌͌̽̄͐̇͑͛͌͘͜͜ ̷̡̧͓̝̜͚̼̪̘̂̿̎̊͝ͅ ̶̨͔͉͈̝̮̭̭̥̳̭̬̠̲͛͆̊̓̒͜ ̵͖̟̃̀́̌͋̎̀̌͑̔̀͐ ̷̡̧̺̯͙̖̥̫̬̳̒͛͋̇͐̈́͘͜͝ ̴̤̳̜͂̇̀̔̈́͠͝͝ ̵̼̙̝͕͕̉̄̑̎͆̄̕̚͝5̶̫͉̼͉͉̠̫̋͒̀̓͌d̷͖̰͔̈́̾̿̎̿̋͑̇̋̍͐̍́̾͐d̸̩͙̭̗̩̞̯͔̰̖̻̘̱͉̄̄̏̐̂̍̾̽̈̓̅̄̀͐͝4̵̧̛̞̦͉̯̲͇͕̩̉͆̑̅̑̾͊̓͐͜6̵̨̨̺̺̟̪̣̦͓͇̮̲͓͓̙̉̏́͠7̶̢̨̹̲̜̼̘͚̪̻̙̩̓̿́̏̒̎͝͠͠͝f̸̛̮̦͚͍̑̈́͑̓͛͝c̴̫̘̣̹̈́͐̈́̑̎e̷̢̠̰̯̲̱̙̱̒̈́͜5̶̩̬̹͍̱̰̘͓̘́̚0̶̻̗̘̬̜̬̜̯̟͈̩͎̇͑̾͒̈́͊̈́̅̄̚͠b̸̤̫͙̫͈́͒͊͒̕͘͘͜͝ ̸̲̦̪̗̺͖͈̝̪̞͎́̐̀͒͠ ̵̭̰͍̪̪̇͛̽͋̊2̴̝̙̞̺̱̓̈́͂̒̽̔̓́̀ ̴̘͈͉͙͕̌͂͠y̷̭̜̬͕͖̲͗̔̀̂ͅe̴͖͙̪̭̼͎̝͕͇̖̭̟̭̔͐̈́̽̈́͛̉̆a̴̤̹̣͙͖̠̺͔̻̗̋̈́̿̔͋̾͒̊̀̄̇͊̿ͅŗ̵̡̖͚̦̹͔͖̗̼̻̈̕͜ş̴͓̳͕͕͙̊̽͐̍̇ ̸̡̛̛͚͕̠̪̬͍̞̰͉̽̎̿̑̈̑͆̃̑̐͝ȁ̷̘͇͇̰̦̬͔̯̪̉̈́̄̽̈́͒̀̀̀̈͜͠͝g̶̱̮͈̞̝̘̱̊͐́̀̾̍̄̃̕̚͝o̸̞̘̹͗̌͂̈́ ̷̰̭͙̠̤̤̫̜͌͆͐̌͒̋̑̚͝ ̷̡̢͙̫̞̻̺͙͓̟͓̻̓̑̑͋̓͊̈́̈̇͘̚̚͠ͅ1̶̬̼̗͎̇͆̅͛̇̃̈̋̃͋̿̚͝ͅ.̷̢̫̯̯̎͗̽̄͑̎̌͊̏̃5̵̥̗̩̤̬̰̓̿̉͗̃̈͆̉̚7̷̧̬̥̼͔̯͙̩̫̲̞͕̿̇͊́̾͊̉̾̓̒ ̴͔͓̱̼̲͉̗̻͉̐̽͆͋́́̏̆͜Ḿ̴̨̖͇̞̤̭͔̜̳͉̘̘̂̍͘͘͝B̵̢̛̻̹̜͈̞̠͉̹͔̯̈̑̍͛̽̊̏̚͝͝ņ̴̱̞͕͎̝̞̺͔͎̙̫̤̊͛͘͝u̸͍̻̳̰͉̳͕͚͕͍̲͎̘̔̀̄̊͋̂̄̔̓͗̚͜͜͠x̵͖͇͐̍͛̀ ̴̢̅͑́͋̎̌͗́̑͛ ̶̮̝̲̘̗͂̄́͂͆̌̆͒̓͂͌̑̔̿͜͝l̵̡̨̡̝͉̣̝̹̝̞̳̱̤̱͆͠a̴̦̹̦̻̱͈̝͚̙̰̓̆̀̊͑̀̐͋͌̚̚͝t̷̡̛͙̰͖̖͉̺̗̦̳̟̬̠̽̃͐̈̄́͆̌́̑͋͘͝ë̶͎̘̟̲͍͕͍́š̴̟̩͓̤̜̯̖̍̾̓̍̉̾̔́͘͘t̷̞̖̬̱̯̣̜̪̭̬͎̔̇̾͊̈́̄͂̏͝ ̵̗̮͓̙̙͉̗̼̀̀͜ ̷̀̈́̔̂́̍́͒̚͝͠d̸̨̠̮͕̭̭͇̘͆ͅȩ̵̩̙͙͓͖̣̝͓̜͎͆̈́̑́̀̓̏͗̑̊́͝͝2̵̘̝̮͎̠̍̀̓̎̀̃̈́̾f̷̨͙̱͕̪̝̘͙͚̥͖͐͋̈́͠7̸̲͖̟͙͙̍ͅb̴͖̀̓͆̏̌̒̌͐8̷̢̛̺̻̭͕̦͔̣͍̘̹̝͓̽̈́̊̑̏̄̏̕͘̚͜6̶̞̹̮̻̼̳̦̱͖͗̊̌̏͜͝7̵̞͉͔̯̰̺̹͖̯͋͂̎̏̅̀̋̿̇̑̑̍̚͠
 docker.io/almalinux/10-init     latest      defe64aa76a6  9 days ago   198 MB
-q̴̜̫̣̻̄̊̈́͐͒̍̇͂̚̕͜u̵̧̡͈̹̞̥͉̪̦͖͕͙͇͑̏̅̀̂͜͝ͅä̸̺͍́̓̉͒̅̊̓̃̅̎́͒̂͜ͅý̶̧̖̰̪͖͛̂̀ņ̶̧̦̪͍̲̭̏̓̄̿̊̽͐͛͑̿̋͝/̵̨̧̠̞̭͕̇h̷̨̖̘͇͔̜̭̣̱͈̩͚͚͍̯̊̀̔͗̈̍̈́̀̀͌̊̚̕̕ę̶̛̤͖̙̠̫̜̻̭̟̘̫͐̿̑̈́̈́̃̋͗͋̃l̴̫̫̊͂̍͌̓̽͛͊͌̅̋̊l̸̡̲̜̗͙̊͊̇̃̒͛̓̇̍̾͛̋͊̑͘ͅő̶̡̨̢̢̯͍̭̥͇͙͔̞̃̊̀͒̋̌͌̃̚͜ņ̶̧̦̪͍̲̭̏̓̄̿̊̽͐͛͑̿̋͝/̵̨̧̠̞̭͕̇h̷̨̖̘͇͔̜̭̣̱͈̩͚͚͍̯̊̀̔͗̈̍̈́̀̀͌̊̚̕̕ę̶̛̤͖̙̠̫̜̻̭̟̘̫͐̿̑̈́̈́̃̋͗͋̃l̴̫̫̊͂̍͌̓̽͛͊͌̅̋̊l̸̡̲̜̗͙̊͊̇̃̒͛̓̇̍̾͛̋͊̑͘ͅő̶̡̨̢̢̯͍̭̥͇͙͔̞̃̊̀͒̋̌͌̃̚͜.̶̠̻̟͕̟͖̘͔̟͙͈̔̏̋̈́̈̾̉̃̈́ȋ̵̧̩͎͍̱̳̮̲̠͓̲̘̻̆̐͐̓̾͜͜͝͠o̷̦̳͓̬͋̏́́̀̔̕͘͠/̵̛̛͓͉̟̱̻͓̯͙̫͖͙̖̄̋̋͘p̴̨̮͔̻̹͚̝̙̋o̷̻̬̥̹̗͎̳͈̳͓͔̬͈͋̓̍̇͐̈̈́̓̏̅̏́̚̚ͅḍ̸̗̥̩̆̓́͝m̸̢̳̳̳̘͈̩̻̱̎͌́̔ä̴̩̩̺̳̲̯̓͒͐ņ̶̧̦̪͍̲̭̏̓̄̿̊̽͐͛͑̿̋͝/̵̨̧̠̞̭͕̇h̷̨̖̘͇͔̜̭̣̱͈̩͚͚͍̯̊̀̔͗̈̍̈́̀̀͌̊̚̕̕ę̶̛̤͖̙̠̫̜̻̭̟̘̫͐̿̑̈́̈́̃̋͗͋̃l̴̫̫̊͂̍͌̓̽͛͊͌̅̋̊l̸̡̲̜̗͙̊͊̇̃̒͛̓̇̍̾͛̋͊̑͘ͅő̶̡̨̢̢̯͍̭̥͇͙͔̞̃̊̀͒̋̌͌̃̚͜ ̵̧̪̮͉͕̳̞̼̣͛ ̶̟̻̟̻̞̬͈̘͚̣̃̽̓̋̓̒͑̅͘̕͘ ̶̨͙̳͎̭͈̀̔̈̂ ̸̛͕̒̏̿̆̈́̈́͂̉͘͘ ̴̢̰̮̖̻̤̭̭͕̺̦͍͙̏̅̉̽̿̑̆̌͘̕͜͠͝ ̴̢̤̠͈͕̺̠̮̱̀͐̀͗̃̓́̓̒̚̕͘ ̷̥͖͖̯̻̝̝̝̥̲̟͕̫́͋̐͊̿ ̸̧͚̙͖̪̪͕̀ͅͅ ̴̡̛̪̝͓̮̦̳̰͈͓̭̮̹̈̽̃̈́̓̈̑͘ ̶̗͇̝̥̻̻͓̤̯͐͒̈́̆̀̎̓͊̕͝͝ͅͅ ̶̡̳̠̠̯̦̗͚̯͍̻̤̹̐̎͛͜ͅ ̸̝̪̫̻͌́̉̉̿̈̈́̈́͝͠ĺ̵̨͙̘̖̯̮͉̥̱͍̻̞͆̆͌́̃̍͛͐͂̂͂́͜ą̸̣͈̮̯̻̲̼̯̠̟̜̱̞̺̓͋͒̿̓̄͠͝ţ̷̝͓̱̟̳̬̠͇͕̹͗̒̓͋̽̐̕̚͝ͅe̶̺̹͔̟̾ͅs̷̨̢̘̜̭̜̤̱̣̬͈̦̘̓͋̓̎͛̿t̷̢̬̭̙̦̹̖̙̅̀́͌͌̽̄͐̇͑͛͌͘͜͜ ̷̡̧͓̝̜͚̼̪̘̂̿̎̊͝ͅ ̶̨͔͉͈̝̮̭̭̥̳̭̬̠̲͛͆̊̓̒͜ ̵͖̟̃̀́̌͋̎̀̌͑̔̀͐ ̷̡̧̺̯͙̖̥̫̬̳̒͛͋̇͐̈́͘͜͝ ̴̤̳̜͂̇̀̔̈́͠͝͝ ̵̼̙̝͕͕̉̄̑̎͆̄̕̚͝5̶̫͉̼͉͉̠̫̋͒̀̓͌d̷͖̰͔̈́̾̿̎̿̋͑̇̋̍͐̍́̾͐d̸̩͙̭̗̩̞̯͔̰̖̻̘̱͉̄̄̏̐̂̍̾̽̈̓̅̄̀͐͝4̵̧̛̞̦͉̯̲͇͕̩̉͆̑̅̑̾͊̓͐͜6̵̨̨̺̺̟̪̣̦͓͇̮̲͓͓̙̉̏́͠7̶̢̨̹̲̜̼̘͚̪̻̙̩̓̿́̏̒̎͝͠͠͝f̸̛̮̦͚͍̑̈́͑̓͛͝c̴̫̘̣̹̈́͐̈́̑̎e̷̢̠̰̯̲̱̙̱̒̈́͜5̶̩̬̹͍̱̰̘͓̘́̚0̶̻̗̘̬̜̬̜̯̟͈̩͎̇͑̾͒̈́͊̈́̅̄̚͠b̸̤̫͙̫͈́͒͊͒̕͘͘͜͝ ̸̲̦̪̗̺͖͈̝̪̞͎́̐̀͒͠ ̵̭̰͍̪̪̇͛̽͋̊2̴̝̙̞̺̱̓̈́͂̒̽̔̓́̀ ̴̘͈͉͙͕̌͂͠y̷̭̜̬͕͖̲͗̔̀̂ͅe̴͖͙̪̭̼͎̝͕͇̖̭̟̭̔͐̈́̽̈́͛̉̆a̴̤̹̣͙͖̠̺͔̻̗̋̈́̿̔͋̾͒̊̀̄̇͊̿ͅŗ̵̡̖͚̦̹͔͖̗̼̻̈̕͜ş̴͓̳͕͕͙̊̽͐̍̇ ̸̡̛̛͚͕̠̪̬͍̞̰͉̽̎̿̑̈̑͆̃̑̐͝ȁ̷̘͇͇̰̦̬͔̯̪̉̈́̄̽̈́͒̀̀̀̈͜͠͝g̶̱̮͈̞̝̘̱̊͐́̀̾̍̄̃̕̚͝o̸̞̘̹͗̌͂̈́ ̷̰̭͙̠̤̤̫̜͌͆͐̌͒̋̑̚͝ ̷̡̢͙̫̞̻̺͙͓̟͓̻̓̑̑͋̓͊̈́̈̇͘̚̚͠ͅ1̶̬̼̗͎̇͆̅͛̇̃̈̋̃͋̿̚͝ͅ.̷̢̫̯̯̎͗̽̄͑̎̌͊̏̃5̵̥̗̩̤̬̰̓̿̉͗̃̈͆̉̚7̷̧̬̥̼͔̯͙̩̫̲̞͕̿̇͊́̾͊̉̾̓̒ ̴͔͓̱̼̲͉̗̻͉̐̽͆͋́́̏̆͜Ḿ̴̨̖͇̞̤̭͔̜̳͉̘̘̂̍͘͘͝B̵̢̛̻̹̜͈̞̠͉̹͔̯̈̑̍͛̽̊̏̚͝͝ņ̴̱̞͕͎̝̞̺͔͎̙̫̤̊͛͘͝u̸͍̻̳̰͉̳͕͚͕͍̲͎̘̔̀̄̊͋̂̄̔̓͗̚͜͜͠x̵͖͇͐̍͛̀ ̴̢̅͑́͋̎̌͗́̑͛ ̶̮̝̲̘̗͂̄́͂͆̌̆͒̓͂͌̑̔̿͜͝l̵̡̨̡̝͉̣̝̹̝̞̳̱̤̱͆͠a̴̦̹̦̻̱͈̝͚̙̰̓̆̀̊͑̀̐͋͌̚̚͝t̷̡̛͙̰͖̖͉̺̗̦̳̟̬̠̽̃͐̈̄́͆̌́̑͋͘͝ë̶͎̘̟̲͍͕͍́š̴̟̩͓̤̜̯̖̍̾̓̍̉̾̔́͘͘t̷̞̖̬̱̯̣̜̪̭̬͎̔̇̾͊̈́̄͂̏͝ ̵̗̮͓̙̙͉̗̼̀̀͜ ̷̀̈́̔̂́̍́͒̚͝͠d̸̨̠̮͕̭̭͇̘͆ͅȩ̵̩̙͙͓͖̣̝͓̜͎͆̈́̑́̀̓̏͗̑̊́͝͝2̵̘̝̮͎̠̍̀̓̎̀̃̈́̾f̷̨͙̱͕̪̝̘͙͚̥͖͐͋̈́͠7̸̲͖̟͙͙̍ͅb̴͖̀̓͆̏̌̒̌͐8̷̢̛̺̻̭͕̦͔̣͍̘̹̝͓̽̈́̊̑̏̄̏̕͘̚͜6̶̞̹̮̻̼̳̦̱͖͗̊̌̏͜͝7̵̞͉͔̯̰̺̹͖̯͋͂̎̏̅̀̋̿̇̑̑̍̚͠
 ```
-
-_Some lines a intentionally scrambled to highlight Alma Linux 10 Init image._
 
 Here, Docker Hub is specifically used instead of quay.io for a reason. Give it a guess.
 
@@ -101,15 +94,13 @@ podman create \
 
 2. Security
 
-3. Volume
+3. Network
 
-4. Network
+4. Display
 
-5. Display
+5. Devices
 
-6. Devices
-
-7. Finally add the container image and `sleep infinite` as the command
+6. Finally add the container image and `sleep infinite` as the command
 
 ```
 docker.io/almalinux/10-init \
