@@ -1,0 +1,97 @@
+---
+title: Building a Capsule Container
+sidebar:
+  order: 1
+---
+
+# Capsule Containers
+
+## Introduction
+Containers that tightly integrates with the host os,
+allowing sharing of the HOME directory of the user, external storage, external USB devices and graphical apps (X11/Wayland), audio, and all ports
+in a way that the host and the container becomes indistuinguishable from each other. When working towards it, few challenges will be encountered.
+We will solve it as we move.
+
+- Privilledged Ports
+
+Ports under 1024 are considered privilledged that rootless container can not bind directly as kernel blocks processes without `CAP_NET_BIND_SERVICE` from binding privilledged ports. Binding ports is what brings this issue. Thanks to podman's engineers, we have `--network host` that does not bind any port at all, but just uses host network directly.
+
+<Banner variant="tip" content="<i>Sometimes, it is wiser to not tackle, but to sidestep, and advance. <br> - Hayam A.</i>" />
+
+
+- Devices
+
+A good thing is everything's exposed as files folders. Devices are shown in the virtual directory `/dev`
+
+Chances are you will need a display to access a program. Linux primarily uses two graphical displays, X11 and Wayland.
+Fortunately, Podman has display support for containers that can be directly used.
+
+- Security
+
+<Aside type="caution" title="Disabling SELinux">
+    Disabling SELinux is one of the easiest way to get pwned and
+    disabling SELinux for a container only gives the container unconfined access
+    while keeping the system under the control of SELinux and
+    it is still a security degrade.
+</Aside>
+
+SELinux, a security policy, is one of the thing which rpm distributions renowned to have support for.
+If a container tries to run as if a host as
+it needs to get as same control as the system over it which SELinux will conflict with therefor, it has to be done as follows,
+
+<Steps>
+<Step title="Disable SELinux confinement">
+  First created a container unrestricted by SELinux via
+  `--security-opt label=disable` when creating a container.
+</Step>
+<Step title="Inspect using Podman">
+    insepct the container using `podman inspect` and pipe the output to a JSON file which holds the needed permission for the container to work.
+</Step>
+<Step title="Create a policy using Udica">
+  Generate a SELinux policy using `Udica` from the JSON file.
+  This policy will have needed gates opened for Capsule to work.
+</Step>
+<Step title="Load the SELinux policy">
+ Now the policy can be loaded by `semodule load`.
+</Step>
+<Step title="Use it to generate a container">
+    Now create a new container with that policy in use
+    without needing to degrade the system security.
+</Step>
+
+</Steps>
+
+- Image incompatibility
+
+Capsule containers need to run as if it is the host therefor, it needs to access system services which ordinary images lack the support for. A specific OCI-image type, init image, is required. The Init Image extends the base image, designed to run an init system as PID 1 for running multi-(system)services inside a container.
+
+Since it has to be produced in a rpm based host, An Alma Linux 10 init image will be used as its default init service is systemd.
+
+It can be pulled by
+
+```bash
+podman pull docker.io/almalinux/10-init
+```
+
+```bash
+Trying to pull docker.io/almalinux/10-init:latest...
+Getting image source signatures
+Copying blob 1762172a5766 [======================>---------------] 41.7MiB / 68.1MiB | 412.1 KiB/s
+Copying blob 1762172a5766 done   |
+Copying config defe64aa76 done   |
+Writing manifest to image destination
+defe64aa76a60a989666f479c14779cc3774ee00ee9c65c18a301543b76b30e2
+
+```
+Here, Docker Hub is specifically used instead of quay.io for a reason. Give it a guess.
+
+## Build
+
+```bash
+podman image ls
+```
+
+``` bash
+REPOSITORY                      TAG         IMAGE ID      CREATED      SIZE
+docker.io/almalinux/10-init     latest      defe64aa76a6  9 days ago   198 MB
+```
