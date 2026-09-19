@@ -2,18 +2,17 @@
 title: C365 - A comprehensive resource of container technology.
 description: Learn about a technology that revolutionized the development and operating in information technology.
 banner:
-  content: Improve this resource by clicking the github icon that will redirect to the github repository of C365.
+  content: Improve this resource by clicking the github icon.
   type: tip
   dismissible:
     id: alpha-note
 ---
 
-_It is recommended for both who want to learn how to manage containers and who want to understand the underlying architecture to start with general._
 
 <LinkCard
 title="Getting started - Introduction (Recommended)"
 description="An introduction covering container technologies and its aspects broadly before jumping into Working with containers or its architecture"
-href="introduction"
+href="get-started"
 />
 
 <div class="grid grid-cols-2 gap-4">
@@ -28,6 +27,39 @@ href="introduction"
     href="architecture"
     />
 </div>
+
+<LayerCard>
+<LayerCardHeader>FAQ</LayerCardHeader>
+<LayerCardContent>
+    <AccordionGroup>
+    <Accordion>
+      <AccordionTrigger>Where should I start from?</AccordionTrigger>
+      <AccordionContent>
+        You should start from [get started](get-started) as it covers container technologies broadly and gives the chance to decide if it's a right fit.
+      </AccordionContent>
+    </Accordion>
+    <Accordion>
+      <AccordionTrigger>Why should I learn about containers</AccordionTrigger>
+      <AccordionContent>
+        Learning about container technology shifts your skillset from just knowing how to develop to deploy at scale.
+      </AccordionContent>
+    </Accordion>
+    <Accordion>
+      <AccordionTrigger>Will I learn about docker</AccordionTrigger>
+      <AccordionContent>
+        No. This resource primarily focus on Podman as its architecture's more future proofing. It's planned to add support for other platforms down the road though.
+      </AccordionContent>
+    </Accordion>
+    <Accordion>
+      <AccordionTrigger>What optimal system setup do I need</AccordionTrigger>
+      <AccordionContent>
+        You should be able to use a system setup as stated in [Setup](setup) to get the most of this resource.
+      </AccordionContent>
+    </Accordion>
+    </AccordionGroup>
+</LayerCardContent>
+</LayerCard>
+
 
 <Banner variant="tip" content="All trademarks are the property of their respective owners. Unless specified otherwise, we do not claim endorsement or affiliation with anyone.
 Standard terminolgies are used and they do not refer to any real-word actions." />

@@ -10,7 +10,7 @@ const nimbusConfig = defineNimbusConfig({
   title: "C365 ",
   description: "A comprehensive resource of container technology.",
   locale: "en",
-  github: "https://github.com/hayamahamed/c365",
+  github: "https://github.com/hayamahamed/c365-docs",
   socialImageAlt: "C365",
 });
 

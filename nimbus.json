@@ -50,6 +50,34 @@
         "src/components/ui/link-card/LinkCard.astro",
         "src/components/ui/link-card/index.ts"
       ]
+    },
+    {
+      "slug": "collapsible",
+      "type": "registry:ui",
+      "version": "0.14.0",
+      "source": "https://nimbus-docs.com/registry",
+      "hash": "sha256:ba266b75f45260ed5e0f40bcbcd642acdc5aafee9ba177d41b696a06a897505a",
+      "files": [
+        "src/components/ui/collapsible/Collapsible.astro",
+        "src/components/ui/collapsible/CollapsibleContent.astro",
+        "src/components/ui/collapsible/CollapsibleTrigger.astro",
+        "src/components/ui/collapsible/collapsible.client.ts",
+        "src/components/ui/collapsible/index.ts"
+      ]
+    },
+    {
+      "slug": "accordion",
+      "type": "registry:ui",
+      "version": "0.14.0",
+      "source": "https://nimbus-docs.com/registry",
+      "hash": "sha256:d867eb2d71e2e935b2614fae2509cfa8c57722888460263bbd2950f3176f84b9",
+      "files": [
+        "src/components/ui/accordion/Accordion.astro",
+        "src/components/ui/accordion/AccordionContent.astro",
+        "src/components/ui/accordion/AccordionGroup.astro",
+        "src/components/ui/accordion/AccordionTrigger.astro",
+        "src/components/ui/accordion/index.ts"
+      ]
     }
   ]
 }

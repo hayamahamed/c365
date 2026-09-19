@@ -13,8 +13,10 @@ import { Step, Steps } from "./components/ui/steps";
 import { Tabs, TabItem } from "./components/ui/tabs";
 import { Button } from "./components/ui/button";
 import { Banner } from "./components/ui/banner";
-import { LayerCard } from "./components/ui/layer-card";
 import { LinkCard } from "./components/ui/link-card";
+import { Accordion,AccordionContent,AccordionGroup,AccordionTrigger } from "./components/ui/accordion";
+import { LayerCard, LayerCardContent, LayerCardHeader } from "./components/ui/layer-card";
+
 
 export const components = {
   Aside,
@@ -28,6 +30,7 @@ export const components = {
   Tabs,
   Button,
   Banner,
-  LayerCard,
-  LinkCard
+  LinkCard,
+  Accordion, AccordionContent, AccordionGroup, AccordionTrigger,
+  LayerCard, LayerCardContent, LayerCardHeader,
 };
