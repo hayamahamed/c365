@@ -61,11 +61,11 @@ it needs to get as same control as the system over it which SELinux will conflic
 
 </Steps>
 
-- Image incompatibility
+- Image Compatibility
 
 Capsule containers need to run as if it is the host therefor, it needs to access system services which ordinary images lack the support for. A specific OCI-image type, init image, is required. The Init Image extends the base image, designed to run an init system as PID 1 for running multi-(system)services inside a container.
 
-Since it has to be produced in a rpm based host, An Alma Linux 10 init image will be used as its default init service is systemd.
+Since it has to be produced in a rpm based host, An Alma Linux 10 init image will be used.
 
 It can be pulled by
 

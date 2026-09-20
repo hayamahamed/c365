@@ -69,38 +69,70 @@ const resolvedMarkdownUrl =
         <link rel="icon" href="/favicon.svg" />
         <script is:inline>
             (() => {
-                const KEY = "ui-mode";
+                // Updated key to match standard theme selectors
+                const KEY = "theme";
                 const media = window.matchMedia("(prefers-color-scheme: dark)");
 
                 const readPref = () => {
                     try {
                         const v = localStorage.getItem(KEY);
-                        return v === "dark" || v === "light" ? v : null;
+                        // Validates all 3 possible states
+                        return v === "dark" || v === "light" || v === "system"
+                            ? v
+                            : "system";
                     } catch {
-                        return null;
+                        return "system";
                     }
                 };
 
-                const resolveMode = () =>
-                    readPref() ?? (media.matches ? "dark" : "light");
+                const resolveMode = () => {
+                    const pref = readPref();
+                    if (pref === "system") {
+                        return media.matches ? "dark" : "light";
+                    }
+                    return pref;
+                };
 
                 const applyTheme = () => {
                     const root = document.documentElement;
                     const mode = resolveMode();
-                    if (mode === "dark") root.setAttribute("data-mode", "dark");
-                    else root.removeAttribute("data-mode");
+                    const rawPreference = readPref();
+
+                    // 1. Core visual markers for Tailwind/CSS selectors
+                    root.setAttribute("data-mode", mode);
                     root.style.colorScheme = mode;
+
+                    // 2. Hydrate active selection styling for any dropdowns/buttons rendered on page
                     document
-                        .querySelectorAll("[data-nb-theme-toggle]")
-                        .forEach((b) => {
-                            b.setAttribute("data-nb-state", mode);
+                        .querySelectorAll("[data-nb-theme-dropdown]")
+                        .forEach((dropdown) => {
+                            dropdown
+                                .querySelectorAll("[data-icon-mode]")
+                                .forEach((icon) => {
+                                    const m =
+                                        icon.getAttribute("data-icon-mode");
+                                    icon.setAttribute(
+                                        "data-active",
+                                        String(m === rawPreference),
+                                    );
+                                });
+                            dropdown
+                                .querySelectorAll("[data-theme-value]")
+                                .forEach((item) => {
+                                    const val =
+                                        item.getAttribute("data-theme-value");
+                                    item.setAttribute(
+                                        "data-active",
+                                        String(val === rawPreference),
+                                    );
+                                });
                         });
                 };
 
                 applyTheme();
                 document.addEventListener("astro:after-swap", applyTheme);
                 media.addEventListener("change", () => {
-                    if (!readPref()) applyTheme();
+                    if (readPref() === "system") applyTheme();
                 });
                 window.addEventListener("storage", (e) => {
                     if (e.key === KEY) applyTheme();

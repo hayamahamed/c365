@@ -36,7 +36,7 @@ const formattedDate = lastUpdated
         )}
         {...attrs}
     >
-        <!-- {lastUpdated && (
+        {lastUpdated && (
             <span class="inline-flex items-center gap-1.5 px-2 py-1 text-muted-foreground">
                 <Icon name="ph:clock" class="w-3.5 h-3.5" />
                 Updated{" "}
@@ -53,7 +53,7 @@ const formattedDate = lastUpdated
             >
                 |
             </span>
-        )} -->
+        )}
 
         {markdownUrl && (
             <>
@@ -73,7 +73,7 @@ const formattedDate = lastUpdated
                     </span>
                 </button>
 
-                <!-- <span
+                <span
                     aria-hidden="true"
                     class="select-none text-muted-foreground/40"
                 >
@@ -88,7 +88,7 @@ const formattedDate = lastUpdated
                 >
                     <Icon name="ph:markdown-logo" class="w-3.5 h-3.5" />
                     View as Markdown
-                </a> -->
+                </a>
             </>
         )}
     </div>
