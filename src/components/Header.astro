@@ -11,6 +11,7 @@ import {
     stripBase,
     withBase,
 } from "@cloudflare/nimbus-docs/runtime";
+import { Badge } from "./ui/badge";
 
 interface Props {
     /** Astro collection id for the current page, forwarded from DocsLayout. */
@@ -55,15 +56,12 @@ const resolveSectionHref = (href: string): string =>
                         <!-- {config.title} -->
                     </span>
                 </a>
+                <span> | </span>
                 <a href="/glossary" class="group shrink-0">
-                    <span class="font-semibold text-sm text-foreground group-hover:text-primary transition-colors flex flex-row gap-4">
-                        Glossary
-                    </span>
+                    <Badge text="Glossary" size="medium" variant="info" />
                 </a>
                 <a href="/setup" class="group shrink-0">
-                    <span class="font-semibold text-sm text-foreground group-hover:text-primary transition-colors flex flex-row gap-4">
-                        Setup
-                    </span>
+                    <Badge text="Setup" size="medium" variant="info" />
                 </a>
             </slot>
 
