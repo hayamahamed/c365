@@ -38,8 +38,8 @@ const formattedDate = lastUpdated
     >
         {lastUpdated && (
             <span class="inline-flex items-center gap-1.5 px-2 py-1 text-muted-foreground">
-                <Icon name="ph:clock" class="w-3.5 h-3.5" />
-                Updated{" "}
+                <!-- <Icon name="ph:clock" class="w-3.5 h-3.5" /> -->
+                <!-- Updated{" "} -->
                 <time datetime={lastUpdated.toISOString()}>
                     {formattedDate}
                 </time>
@@ -58,7 +58,7 @@ const formattedDate = lastUpdated
         {markdownUrl && (
             <>
                 <button type="button" data-nb-page-actions-copy class={baseBtn}>
-                    <Icon
+                    <!-- <Icon
                         name="ph:copy"
                         class="w-3.5 h-3.5"
                         data-nb-page-actions-copy-icon
@@ -67,13 +67,13 @@ const formattedDate = lastUpdated
                         name="ph:check"
                         class="hidden w-3.5 h-3.5 text-success"
                         data-nb-page-actions-check-icon
-                    />
+                    /> -->
                     <span data-nb-page-actions-label aria-live="polite">
                         Copy page
                     </span>
                 </button>
 
-                <span
+                <!-- <span
                     aria-hidden="true"
                     class="select-none text-muted-foreground/40"
                 >
@@ -88,7 +88,7 @@ const formattedDate = lastUpdated
                 >
                     <Icon name="ph:markdown-logo" class="w-3.5 h-3.5" />
                     View as Markdown
-                </a>
+                </a> -->
             </>
         )}
     </div>

@@ -1,0 +1,122 @@
+---
+title: Images
+sidebar:
+  order: 2
+---
+
+# Images
+
+Container images are unchanging static files that hold executable code and operate in isolation.
+A container image assembles all the components needed to create a container on an operating system, and it comprises different image layers stacked on top of each other. Container images are immutable.
+
+## Search registries
+
+Container images are primarily searched on registries.
+
+```bash
+podman search almalinux
+```
+
+It will show all images related to the name almalinux.
+
+```bash
+NAME                                   DESCRIPTION
+docker.io/library/almalinux            The official build of AlmaLinux OS.
+docker.io/almalinux/almalinux          DEPRECATION NOTICE: This image is deprecated...
+docker.io/almalinux/9-base             AlmaLinux release 9.8 base container image
+docker.io/almalinux/8-base             AlmaLinux release 8.10 base container image
+...
+```
+
+Podman defaults to docker.io, so podman search returns it.
+
+Which registry to use also can be specified as follows,
+
+```bash
+podman search quay.io/almalinux
+```
+
+Now it will show results aggregated from quay.io registry
+
+```bash
+NAME                                        DESCRIPTION
+quay.io/prometheus/node-exporter            # Node exporter  [![Build Status](https://gi...
+quay.io/almalinuxorg/almalinux
+quay.io/almalinuxorg/almalinux-bootc
+quay.io/containerdisks/almalinux            # Almalinux Containerdisk Images  <img src="...
+...
+```
+
+## Pull
+
+The url from the `podman search` can be used to get the container image (to local storage) using `podman pull`.
+
+```bash
+podman pull quay.io/almalinuxorg/almalinux
+```
+
+```bash
+Trying to pull quay.io/almalinuxorg/almalinux:latest...
+Getting image source signatures
+Copying blob 653c5d8d0d66 skipped: already exists
+Copying config de2f7b8674 done   |
+Writing manifest to image destination
+de2f7b867468d83dcc57f1ed18177debebabb064a42134067cdc9a3a2cd36536
+```
+
+As you may see, since no tag's specified it default to latest.
+
+## Search on disk
+
+To search the images present locally, either `podman images` or `podman image ls` can be used as both returns the same results.
+
+```bash
+podman images
+```
+
+```bash
+REPOSITORY                      TAG         IMAGE ID      CREATED       SIZE
+quay.io/almalinuxorg/almalinux  latest      de2f7b867468  4 days ago    194 MB
+```
+
+This will show the images available locally along with,
+
+- which repo it came from
+- tag (latest as the default if no tag is mentioned. Mentioning the appropriate tag is recommended rather than using latest)
+- Image ID that we can use to create containers instead of needing to type the long repo url and its size.
+
+Note that the created date doesn't come from when we pull but from when the container image is built.
+
+## Delete
+
+Image ID, the whole url, or the name of an image can be used to remove the specific image. The name is the rest part excluding the domain (such as quay.io) or localhost. Unless specified by the image ID, the tag is necessary or it will defaults to `:latest` just like podman pull. Here, it is recommended to either use the whole url with the tag or the image ID to avoid unecessary troubles.
+
+A locally stored image can be deleted or removed via `podman image rm`.
+
+```bash
+podman images
+```
+```bash
+REPOSITORY                     TAG         IMAGE ID      CREATED            SIZE
+localhost/main                 latest      f91f69dbf9eb  7 days ago         1.76 GB
+docker.io/almalinux/10-base    latest      4a26427a4423  3 months ago       599 MB
+```
+
+```bash
+podman image rm f91f69dbf9eb
+```
+```bash
+Untagged: localhost/main:latest
+Deleted: f91f69dbf9ebfd3f78d55893fbb81e9546c1ff2ac25c50d632008b617c20447d
+```
+
+```bash
+podman image rm 10-base
+```
+```bash
+Untagged: docker.io/almalinux/10-base:latest
+Deleted: 4a26427a4423e96fd6e3991e4ff6dfe7397510e159e9482635b4cc395c5ce750
+```
+
+
+We will learn more about images, how we build, and related things later.

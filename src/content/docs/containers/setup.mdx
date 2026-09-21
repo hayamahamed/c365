@@ -1,7 +1,10 @@
 ---
 title: Setup
 sidebar:
-  hidden: true
+  order: 1
+  badge:
+    text: System Setup
+    variant: caution
 ---
 
 # Setup
@@ -19,33 +22,57 @@ Since SELinux, systemd, and Podman co-engineered, it has the tightest integratio
 
 When choosing a distribution it is recommended to choose from
 
-- SUSE / openSUSE (Tumbleweed / Leap) : SUSE historically chose apparmor instead of SELinux and it is getting shifted to SELinux therefor, choose a version that has SELinux by defauly
-- Fedora
+- Alma Linux
 - CentOS Stream
+- Fedora
+- Rock Linux
 - RHEL
-- AlmaLinux
-- RockyLinux
+- SUSE / openSUSE (Tumbleweed / Leap) : SUSE historically chose apparmor instead of SELinux and it is getting shifted to SELinux therefor, choose a version that has SELinux by defauly
 
-!!! warning
+<Aside type="danger" title="Worth knowing">Do not run multiple atomic OSTree based OS without careful setup.</Aside>
 
-    Do not run multiple atomic OSTree based operating systems on a single host without careful setup.
+
 
 ## Prepare the system
 
 After installing the operating system, the packages and system updates are often older. It is recommended to update it before proceeding.
 
-```bash
-sudo dnf -y update # Might differ.
-```
+Unlike Debian based operating systems, rpm distros are updated in a single command rather than upgrade && update.
 
-```bash
-podman -v  || sudo dnf install -y podman && \
-skopeo -v  || sudo dnf install -y skopeo && \
-buildah -v || sudo dnf install -y buildah && \
-udica -v   || sudo dnf install -y udica \
+- Common: Almalinux / CentOS / Fedora / Rockylinux / RHEL
+- Atomic: Almalinux Bootc / Fedora Atomic / RHEL For Edge
+- Suse: SLE and others
 
-```
-Some of the distributions may utilize a different resolver for rpm packages such as SUSE uses zypper, Fedora Atomic uses rpm-ostree.
+<Tabs>
+<TabItem label="Common">
+    ```bash
+    sudo dnf -y update && \
+    podman -v  || sudo dnf install -y podman && \
+    skopeo -v  || sudo dnf install -y skopeo && \
+    buildah -v || sudo dnf install -y buildah && \
+    udica -v   || sudo dnf install -y udica \
+    ```
+</TabItem>
+<TabItem label="Atomic">
+    ```bash
+    rpm-ostree update && \
+    podman -v  || rpm-ostree install -y podman && \
+    skopeo -v  || rpm-ostree install -y skopeo && \
+    buildah -v || rpm-ostree install -y buildah && \
+    udica -v   || rpm-ostree install -y udica \
+    ```
+</TabItem>
+<TabItem label="Suse">
+    ```bash
+    sudo zypper -y update && \
+    podman -v  || sudo zypper install -y podman && \
+    skopeo -v  || sudo zypper install -y skopeo && \
+    buildah -v || sudo zypper install -y buildah && \
+    udica -v   || sudo zypper install -y udica \
+    ```
+</TabItem>
+</Tabs>
+
 
 <Aside type="note" title="General Info">
     Almost all packages' commands come with man page and help page.
@@ -55,7 +82,7 @@ Some of the distributions may utilize a different resolver for rpm packages such
 
     It is encouraged to read each command's man page and help page to solidy the fundamentals of one on their own.
     <Aside type="tip" title="Encountering Unknown Terminologies">
-        When encountering unknown terminologies, read the footnotes[^3] and the [glossaries](glossary) before proceeding.
+        When encountering unknown terminologies, read the footnotes and the [glossaries](glossary) before proceeding.
     </Aside>
 </Aside>
 
@@ -68,5 +95,3 @@ Some of the distributions may utilize a different resolver for rpm packages such
     - Least privilege by default: Even if a process runs as root, SELinux blocks it unless a specific policy explicitly permits the action.
     - Security Contexts (Labels): Every file, process, user, and network port is assigned an SELinux label therefor, it is easy and possible restrict nearly anything.
     - Type Enforcement: SELinux primarily looks at the type label. If a label does not match what the program trying to do, SELinux will forbid it.
-
-[^3]: These are footnotes.

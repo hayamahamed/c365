@@ -10,7 +10,6 @@ sidebar:
 
 # Containers
 
-![img](/img/cloudcontainers.svg)
 A container is a sandboxed runtime environment on Linux systems.
 The sandbox is constructed using the utilities present in the Linux kernel.
 Software running in this sandbox share the kernel with the host it is running on,
@@ -26,37 +25,46 @@ The contents of the filesystem are typically provided by an image file and the e
 
 Containers should aim to preserve the normal system interface while changing what resources the software can see and access in a way that the software running in the sandbox should not recognize it is in a sandbox. The The software should run just as it would run natively on a host.
 
-??? info "Sometimes, some programs deliberately try to find whether they are running inside an isolated environment."
+<Accordion>
+  <AccordionTrigger>some programs deliberately try to find whether they are running inside an isolated environment.</AccordionTrigger>
+  <AccordionContent>
+      It can have legitimate purposes such as
 
-    It can have legitimate purposes such as
+        1. diagnostics
 
-      1. diagnostics
+        2. compatibility
 
-      2. compatibility
+        3. virtualization management
 
-      3. virtualization management
+        4. security software
 
-      4. security software
+      But malware can also do this to determine whether it is in a sandbox.
+  </AccordionContent>
+</Accordion>
 
-    But malware can also do this to determine whether it is in a sandbox.
+
+
 
 ### Architecture
 
-```mermaid
-graph RL;
-    A[Container N]-->C[Container Runtime]
-    B[Container X]-->C[Container Runtime]
-    C[Container Runtime]--> D[Host OS]
-```
+
+<Steps>
+<Step title="Host OS" />
+<Step title="Container Runtime" />
+<Step title="Container/s" />
+</Steps>
 
 A Container Runtime sits between the containers and the host. It uses the primitives found on the host to create the containers. Detailed architecture is available at [
 Containers Architecture](../architecture)
 
+The running container/s could be a single, multiple, group/s (pod/s) of multiple containers.
+
 ### Containers, images, and registries
 
-!!! info
-
-    The Open Container Initiative (OCI) is an open governance structure for the express purpose of creating open industry standards around container formats and runtimes.
+<Banner variant="tip" content="The Open Container Initiative (OCI)
+is an open governance structure for the express purpose of
+creating open industry standards around container formats and runtimes.
+" />
 
 | OCI Terms     | Definitions                                                                                               |
 | ------------- | --------------------------------------------------------------------------------------------------------- |
