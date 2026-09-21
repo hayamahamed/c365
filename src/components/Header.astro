@@ -50,8 +50,19 @@ const resolveSectionHref = (href: string): string =>
         <div class="flex items-center gap-3 min-w-0">
             <slot name="brand">
                 <a href={homeHref} class="group shrink-0">
-                    <span class="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
-                        {config.title}
+                    <span class="font-semibold text-sm text-foreground group-hover:text-primary transition-colors flex flex-row gap-4">
+                        <img src="/favicon.svg" />
+                        <!-- {config.title} -->
+                    </span>
+                </a>
+                <a href="/glossary" class="group shrink-0">
+                    <span class="font-semibold text-sm text-foreground group-hover:text-primary transition-colors flex flex-row gap-4">
+                        Glossary
+                    </span>
+                </a>
+                <a href="/setup" class="group shrink-0">
+                    <span class="font-semibold text-sm text-foreground group-hover:text-primary transition-colors flex flex-row gap-4">
+                        Setup
                     </span>
                 </a>
             </slot>

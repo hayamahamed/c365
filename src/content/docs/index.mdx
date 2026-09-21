@@ -7,13 +7,21 @@ banner:
   dismissible:
     id: alpha-note
 ---
+import Icon from "@cloudflare/nimbus-docs/components/Icon.astro";
 
 
-<LinkCard
-title="Getting started - Introduction (Recommended)"
-description="An introduction covering container technologies and its aspects broadly before jumping into Working with containers or its architecture"
-href="get-started"
-/>
+<LayerCard>
+<LayerCardHeader>
+    <Icon name="ph:rocket-launch" class="w-6 h-6" />
+    Getting started
+    <Badge text="Recommended" variant="tip" />
+</LayerCardHeader>
+    <LinkCard
+    title=""
+    description="An introduction covering container technologies and its aspects broadly before jumping into Working with containers or its architecture"
+    href="get-started"
+    />
+</LayerCard>
 
 
 
@@ -43,12 +51,10 @@ href="get-started"
       </AccordionContent>
     </Accordion>
     </AccordionGroup>
-    >
 
 
 <Card title="" icon="ph:path">
-    <div class="grid grid-cols-2 gap-4">
-
+    <div class="flex flex-col gap-4">
     <LinkCard
     title="Working with containers"
     description="Learn how to work with containers practically (Podman oriented)."

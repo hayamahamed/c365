@@ -16,6 +16,7 @@ import { Banner } from "./components/ui/banner";
 import { LinkCard } from "./components/ui/link-card";
 import { Accordion,AccordionContent,AccordionGroup,AccordionTrigger } from "./components/ui/accordion";
 import { LayerCard, LayerCardContent, LayerCardHeader } from "./components/ui/layer-card";
+import { Badge } from "./components/ui/badge";
 
 
 
@@ -34,4 +35,5 @@ export const components = {
   LinkCard,
   Accordion, AccordionContent, AccordionGroup, AccordionTrigger,
   LayerCard, LayerCardContent, LayerCardHeader,
+  Badge
 };
