@@ -9,7 +9,6 @@ banner:
 ---
 import Icon from "@cloudflare/nimbus-docs/components/Icon.astro";
 
-
 <LayerCard>
 <LayerCardHeader>
     <Icon name="ph:rocket-launch" class="w-6 h-6" />
@@ -23,8 +22,8 @@ import Icon from "@cloudflare/nimbus-docs/components/Icon.astro";
     />
 </LayerCard>
 
-
-
+<Tabs>
+<TabItem label="Frequenty Asked">
     <AccordionGroup>
     <Accordion>
       <AccordionTrigger>Where should I start from?</AccordionTrigger>
@@ -51,24 +50,49 @@ import Icon from "@cloudflare/nimbus-docs/components/Icon.astro";
       </AccordionContent>
     </Accordion>
     </AccordionGroup>
+</TabItem>
+<TabItem label="Tracks">
+    <Card title="" icon="ph:path">
+        <div class="flex flex-col gap-4">
+        <LinkCard
+        title="Working with containers"
+        description="Learn how to work with containers practically (Podman oriented)."
+        href="containers"
+        ></LinkCard>
+        <LinkCard
+        title="Containers architecture"
+        description="Learn the underlying architecture of this promising technology"
+        href="architecture"
+              />
+        </div>
+    </Card>
+</TabItem>
+<TabItem label="Compliance">
 
+    # Policies
 
-<Card title="" icon="ph:path">
-    <div class="flex flex-col gap-4">
-    <LinkCard
-    title="Working with containers"
-    description="Learn how to work with containers practically (Podman oriented)."
-    href="containers"
-    ></LinkCard>
-    <LinkCard
-    title="Containers architecture"
-    description="Learn the underlying architecture of this promising technology"
-    href="architecture"
-          />
-    </div>
+    **Trademark Policy**
 
-</Card>
+    All trademarks are the property of their respective owners. Unless specified otherwise, we do not claim endorsement or affiliation with anyone.
 
+    **Privacy Policy**
 
-<Banner variant="tip" content="All trademarks are the property of their respective owners. Unless specified otherwise, we do not claim endorsement or affiliation with anyone.
-Standard terminolgies are used and they do not refer to any real-word actions." />
+    We do not want to need your data.
+
+    We therefore want to be fully transparent about how we use it.
+    This project is developed to run fully as a client side web pages to reduce data footprints of everyone including you and us.
+    We try to use privacy-friendly open source software and not rely on third parties as much as possible.
+
+    # Practices
+
+    **Standard Practices**
+
+    Standard terminolgies are used and they do not refer to any real-word actions.
+
+    # Contribute
+
+    **Contributing**
+
+    Thank you and welcome. You may contribute via [draft]
+</TabItem>
+</Tabs>
