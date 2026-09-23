@@ -7,29 +7,54 @@ sidebar:
 
 <Aside type="note">
     To manage containers, the underlying architecture is unecessary to understand.
+
+    Using rpm distributions recommended.
 </Aside>
 
 
 ## Fundamental
 
-```mermaid
-graph LR
-A[Linux Kernel] --> B[
-      cgroups
-      pid_ns
-      pic_ns
-      net_ns
-      uts_ns
-      mnt_ns
-      user_ns
-      seccomp
-] --> C[Application running on
-OverlayFS]
-```
+<Steps>
+<Step title="Operating System (Linux Kernel)">
+</Step>
+<Step title="Kernel Primitives">
+    Kernel primitives are the fundamental & low-level operations provided by the operating system kernel which is utilized to contruct a sandboxed container environment.
+    <div class="grid grid-cols-2  lg:grid-cols-4 gap-2 ">
+        <Banner variant="tip" content="cgroups" />
+        <Banner variant="tip" content="pid_ns" />
+        <Banner variant="tip" content="pic_ns" />
+        <Banner variant="tip" content="net_ns" />
+        <Banner variant="tip" content="mnt_ns" />
+        <Banner variant="tip" content="mnt_ns" />
+        <Banner variant="tip" content="user_ns" />
+        <Banner variant="tip" content="seccomp" />
+    </div>
+</Step>
+<Step title="Container Environment">
+    A container environment constructred using the kernel primitives with OverlayFS.
+
+    An example instance could be as follows,
+
+    <br/>
+    <LayerCard>
+    <LayerCardHeader>Container Instance</LayerCardHeader>
+    <LayerCardContent>
+        <div class="grid grid-cols-2  lg:grid-cols-4 gap-2 ">
+            <Banner variant="tip" content="Web servers" />
+            <Banner variant="tip" content="Apps" />
+            <Banner variant="tip" content="Databases" />
+            <Banner variant="tip" content="AI / ML" />
+        </div>
+    </LayerCardContent>
+    </LayerCard>
+
+</Step>
+</Steps>
 
 _Diagram 1: Rough Architecture of container system_
 
-To create a container, a container image is used as stated in general. The contents of this image file are duplicated into the sandboxed environment as the root filesystem using OverlayFS and chroot. There are many strategies for mounting the root filesystem in the container, but OverlayFS is quite the common one.
+To create a container, a container image is used. The contents of this image file are duplicated into the sandboxed environment as the root filesystem using OverlayFS and chroot. There are many strategies for mounting the root filesystem in the container, but OverlayFS is quite the common one.
+
 
 In Diagram 1 above, the sandboxed container environment can be seen as the last third box. The middle box holds the kernel primitives that play the key role in container technologies and they are as follows:
 
@@ -43,3 +68,190 @@ In Diagram 1 above, the sandboxed container environment can be seen as the last 
 | mnt_ns               | The Mount Namespace (mnt_ns) is the part of the kernel that stores the mount table. When the sandboxed environment runs in a new Mount Namespace, it can mount filesystems not present on the host. This is very important as you’ll see. |
 | user_ns              | The User Namespace (user_ns) the sandboxed environments to have its own set of user and group IDs that will map to unique user and group IDs back on the host system.                                                                     |
 | seccomp              | seccomp is a utility acts as a filter for kernel calls. This allows us to drop Kernel capabilities in the sandboxed environment. Utilizing seccomp is also not strictly vital to containers.                                              |
+
+## Unshare
+
+
+
+Container technology relies on namespaces to create the sandbox. New Linux Namespaces are typically spawned by using either the `clone` or `unshare` system calls. These exist as C functions that have wrapper in many languages.
+For using in a shell, unshare is more straight forward.
+
+```bash
+unshare --help
+```
+
+
+The mnt_ns is what responsible for storing the mount table in Linux kernel. When a sandboxed environment like a container runs in a new Mount Namespace, it can mount filesystems not present on the host.
+
+```bash
+sudo unshare -m /bin/bash
+```
+
+```bash
+[sudo] password for localhost:
+root@localhost:/var/home/localhost/# whoami
+root
+```
+
+_depending on where you are using, you may need sudo._
+
+- Unshare wraps the unshare kernel sys call.
+- `-m` requests a mount new Namespace.
+- `/bin/bash` tells what program to run after the mount. We ran bash thus, it gave a bash terminal
+
+```bash
+mount -t tmpfs tmpfs /mnt
+mount | grep mnt
+```
+
+It creates a tem fs in ram and covers up the existing up one.
+
+Now lets add something to the new /mnt
+
+```bash
+date > /mnt/date
+cat /mnt/date
+```
+
+```bash
+Fri Sep 11 10:49:31 AM +0530 2026
+```
+
+The shell that spawned the namespace can be closed by using the `exit` command.
+
+```bash
+exit
+```
+
+```bash
+exit
+```
+
+Now open a shell and read from /mnt/date
+
+```bash
+cat /mnt/date
+```
+
+```bash
+cat: /mnt/date: No such file or directory
+```
+
+As it was created in a temporary mount namespace, it is gone after exiting the shell that spawned it.
+
+## chroot
+
+Unshare carves out a new namespace for the container.
+Since a container needs to be as if a whole operating system on its own, a root for it is needed.
+
+
+A fakeroot for the container that the container finds as real can be constructed by `chroot`.
+
+A chroot is an operation that changes the apparent root directory for the current running process and their children.
+
+A program that is run in such a modified environment
+cannot access files and commands outside the specified directory tree.
+This modified environment is called a chroot jail.
+
+chroot shouldn't be used as an isolating. it must be paired with other tools and practices for it.
+
+A new root means it should have a filesystem just small enough and the filesystem can be created inside of a directory as follows.
+
+```bash
+mkdir -p chroot/{bin,lib64}
+cd chroot
+cp -a /bin/{bash,cat,mkdir,pwd,cd} bin
+```
+
+the `chroot` dir is going to be the root for itself and its recursives.
+
+`bin`, `lib`, and `lib64` inside `chroot` and copied the binaries of `cat`, `echo`, `cd`, and `mkdir` into `bin` but,
+Binary alone can't run because of missing dependencies.  Missing dependencies is found using `ldd` and must be added for chroot to work.
+
+```bash
+ldd /bin/{bash,cat,mkdir,pwd,cd}
+```
+
+```
+/bin/bash:
+	linux-vdso.so.1 (0x00007f585e7fc000)
+	libtinfo.so.6 => /lib64/libtinfo.so.6 (0x00007f585e634000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007f585e43b000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f585e7fe000)
+/bin/cat:
+	linux-vdso.so.1 (0x00007f8057629000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007f805740b000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f805762b000)
+/bin/mkdir:
+	linux-vdso.so.1 (0x00007f8302c10000)
+	libselinux.so.1 => /lib64/libselinux.so.1 (0x00007f8302bb3000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007f83029ba000)
+	libpcre2-8.so.0 => /lib64/libpcre2-8.so.0 (0x00007f8302909000)
+	libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007f83028dc000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f8302c12000)
+/bin/pwd:
+	linux-vdso.so.1 (0x00007f3445946000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007f3445729000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f3445948000)
+/bin/cd:
+	not a dynamic executable
+```
+
+A binary that has all necessary libraries within itself and does not rely on external shared libraries is considered not a dynamic executable.
+Some of the dep here might be a symlink and it will fail if just the link name added without its corresponding target
+
+VDSO, shorthand for virtual dynamic shared object, injected by the kernel at execve() time.
+it's mapped directly from kernel memory into the process address space.
+There's no file on disk, so there's nothing to copy.
+It works automatically in any chroot as long as the kernel supports it
+
+```bash
+for lib in            \
+    libtinfo.so.6      \
+    libc.so.6           \
+    ld-linux-x86-64.so.2 \
+    libselinux.so.1       \
+    libpcre2-8.so.0        \
+    libgcc_s.so.1; do
+ls -la /lib64/$lib
+done
+```
+```
+lrwxrwxrwx. 1 root root 15 Jan  1  1970 /lib64/libtinfo.so.6 -> libtinfo.so.6.6
+-rwxr-xr-x. 1 root root 2482096 Jan  1  1970 /lib64/libc.so.6
+-rwxr-xr-x. 1 root root 1002568 Jan  1  1970 /lib64/ld-linux-x86-64.so.2
+-rwxr-xr-x. 1 root root 209040 Jan  1  1970 /lib64/libselinux.so.1
+lrwxrwxrwx. 1 root root 20 Jan  1  1970 /lib64/libpcre2-8.so.0 -> libpcre2-8.so.0.15.0
+lrwxrwxrwx. 1 root root 25 Jan  1  1970 /lib64/libgcc_s.so.1 -> libgcc_s-16-20260819.so.1
+```
+
+Symlinks are denoted by `->`. It seems three files are symlinked. lets add all files excluding vdso.
+
+```bash
+for lib in            \
+    libtinfo.so.6*     \
+    libc.so.6           \
+    ld-linux-x86-64.so.2 \
+    libselinux.so.1       \
+    libpcre2-8.so.0*       \
+    libgcc_s*; do
+cp -a /lib64/$lib lib64/
+done
+```
+
+All dep and target if the dep is a symlink are added, now a chroot can be initialised as follows,
+
+```bash
+sudo chroot . bin/bash
+```
+
+As you might now, bash or sh is also a program. It spawns a shell that can run commands.
+
+```bash
+mkdir hi
+cd hi
+pwd
+```
+```
+/hi
+```

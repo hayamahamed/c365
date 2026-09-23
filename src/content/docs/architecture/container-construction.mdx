@@ -1,0 +1,186 @@
+---
+title: Container Construction
+sidebar:
+  order: 2
+---
+
+# Constructing a container
+
+
+```bash
+mkdir -p concon/{base,upper,work,merged}
+cd concon
+podman pull docker.io/almalinux/10-init
+```
+```
+Trying to pull docker.io/almalinux/10-init:latest...
+Getting image source signatures
+Copying blob 1762172a5766 skipped: already exists
+Copying config defe64aa76 done   |
+Writing manifest to image destination
+defe64aa76a60a989666f479c14779cc3774ee00ee9c65c18a301543b76b30e2
+```
+
+Now that the dir and sub dir for constructing a container is created, we will be using an almalinux image to construct it.
+
+Podman can construct it easily but, we are going to do it ourselves, so let's save the image as an archive (tar.gzip)
+
+```bash
+podman images
+```
+```
+REPOSITORY                   TAG         IMAGE ID      CREATED      SIZE
+docker.io/almalinux/10-init  latest      defe64aa76a6  3 weeks ago  595 MB
+```
+
+```bash
+podman save defe64 | gzip > alma.tar.gz
+ls
+```
+```
+alma.tar.gz  base  merged  upper  work
+```
+
+Now, take `alma.tar.gz` and extract it to the `base` dir
+
+```bash
+tar -xzf alma.tar.gz -C base
+```
+
+It unzips the tar.gz and extracts it to base dir (more specifically changes path to base before extraction).
+Add `v` after `z` or `x` for verbose mode.
+
+```bash
+tree -L base
+```
+
+```
+base
+├── 45758bc998306897d5d45e82df6a85ff8841e8b84e9b229580a869453f6720bd.tar
+├── 8dab7cd6f091a7660c97115a02f0673885863ff09df6284399e3fa3b758051a6
+│   ├── json
+│   ├── layer.tar -> ../45758bc998306897d5d45e82df6a85ff8841e8b84e9b229580a869453f6720bd.tar
+│   └── VERSION
+├── defe64aa76a60a989666f479c14779cc3774ee00ee9c65c18a301543b76b30e2.json
+├── manifest.json
+└── repositories
+```
+
+It should show the rootfs of the container but it doesn't. It is because we extracted a container image pulled by podman.
+
+Container images are created by stacking one layer on another but, here alma has a single layer because almalinux squashed the image into a single layer before building it into an image.
+
+When creating container images, following the same practice as alma is recommended.
+
+Now, let's move the contents of the base to a different dir as `x-image` and extract the filesystem of almalinux from the extracted alma's dir (`x-image`'s tar file) to base.
+
+```bash
+mv base x-image && \
+mkdir base && \
+ls base
+```
+```
+afs  bin  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+```
+
+Now it can be used to mount as an overlayfs to costruct the container environment.<br/>
+OverlayFS is a linux union mount filesystem that can present a single merged directory by layering a lower directory and an upper directory.
+Container base layer is immutable, therefor readonly. It is required to construct a container in this manner.
+
+The merge directory will be what the programs inside the container interacts with. More specifically work is what, the kernel takes it, and adds it to `upper` dir.
+
+Create the filesystem of the container by mounting files as an overlayfs as follows,
+
+```bash
+sudo mount -t overlay overlay \
+-o lowerdir=base,upperdir=upper,workdir=work merged
+```
+
+Now we can use [unshare](../#unshare) to carve out a new namespace for the container and
+[chroot](../#chroot) to give container the root as the root of the extracted almalinux.
+
+```bash
+sudo unshare \
+--pid         \
+--uts          \
+--ipc           \
+--net            \
+--mount           \
+--fork             \
+chroot merged /bin/bash
+```
+
+It creates a new namespace that's detached from host.
+
+```bash
+cat etc/os-release
+echo "nameserver 1.1.1.1" > etc/resolv.conf
+cat etc/resolv*
+```
+```
+NAME="AlmaLinux"
+VERSION="10.2 (Lavender Lion)"
+RELEASE_TYPE=stable
+ID="almalinux"
+ID_LIKE="rhel centos fedora"
+VERSION_ID="10.2"
+PLATFORM_ID="platform:el10"
+PRETTY_NAME="AlmaLinux 10.2 (Lavender Lion)"
+ANSI_COLOR="0;34"
+LOGO="fedora-logo-icon"
+CPE_NAME="cpe:/o:almalinux:almalinux:10.2"
+HOME_URL="https://almalinux.org/"
+DOCUMENTATION_URL="https://wiki.almalinux.org/"
+VENDOR_NAME="AlmaLinux"
+VENDOR_URL="https://almalinux.org/"
+BUG_REPORT_URL="https://bugs.almalinux.org/"
+
+ALMALINUX_MANTISBT_PROJECT="AlmaLinux-10"
+ALMALINUX_MANTISBT_PROJECT_VERSION="10.2"
+REDHAT_SUPPORT_PRODUCT="AlmaLinux"
+REDHAT_SUPPORT_PRODUCT_VERSION="10.2"
+SUPPORT_END=2035-06-01
+nameserver 1.1.1.1
+```
+The root is changed to the extracted almalinux's filesystem root, from there, etc is a child, and that's why it worked without absolute path.
+
+```bash
+mount -t proc proc proc
+ps ax
+```
+
+the first `proc` is the fs type, second's what to mount, and third's where to do
+
+```
+PID TTY      STAT   TIME COMMAND
+  1 ?        S      0:00 /bin/sh
+ 27 ?        R+     0:00 ps ax
+```
+
+The network stack is unshared for the new namespace, so it can not tether to internet.
+
+```bash
+ip -br link | awk '{print $1}'
+```
+```
+lo
+wlp3s0
+virbr0
+```
+
+On host OS, typically three net interfaces are found. io loopsback to localhost. second's a wifi (might be ethernet for you). third's for virtualization.
+
+```bash
+sudo ip link add veth0 type veth peer name veth0-guest
+ip -br link | awk '{print $1}'
+```
+
+```
+lo
+wlp3s0
+virbr0
+veth0-guest@veth0
+veth0@veth0-guest
+```
+
+the first one is self and the other is peer divided by `@`. Basically veth0-guest is peer to veth0 and vice versa the otherway also.
