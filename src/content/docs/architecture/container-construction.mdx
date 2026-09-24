@@ -6,6 +6,17 @@ sidebar:
 
 # Constructing a container
 
+To construct a container an image (more specifically the rootfs of an operating system) is needed.
+The rootfs should be in a folder as `base` where its siblings are `upper`, `work`, and `merged`.
+
+- base should become immutable right after getting a filesystem inside of it.
+
+- upper is where should the changes be reflected.
+
+- Merge should merge the upper as top, base as lower, and present as one.
+
+- Letting things directly write to merge or upper will result in consistency conflicts (also atomicity not to mention),
+therefore programs should write and work on work dir. Let the kernel take care of binding gymnastics.
 
 ```bash
 mkdir -p concon/{base,upper,work,merged}
@@ -158,6 +169,7 @@ PID TTY      STAT   TIME COMMAND
 ```
 
 The network stack is unshared for the new namespace, so it can not tether to internet.
+Open a new terminal on host without closing the current terminal that is in the new namespace to add network stack.
 
 ```bash
 ip -br link | awk '{print $1}'
@@ -169,6 +181,8 @@ virbr0
 ```
 
 On host OS, typically three net interfaces are found. io loopsback to localhost. second's a wifi (might be ethernet for you). third's for virtualization.
+
+Let's wireup a virtual ethernet pair.
 
 ```bash
 sudo ip link add veth0 type veth peer name veth0-guest
