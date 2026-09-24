@@ -6,20 +6,28 @@ sidebar:
 
 # Constructing a container
 
-To construct a container an image (more specifically the rootfs of an operating system) is needed.
-The rootfs should be in a folder as `base` where its siblings are `upper`, `work`, and `merged`.
-
-- base should become immutable right after getting a filesystem inside of it.
-
-- upper is where should the changes be reflected.
-
-- Merge should merge the upper as top, base as lower, and present as one.
-
-- Letting things directly write to merge or upper will result in consistency conflicts (also atomicity not to mention),
-therefore programs should write and work on work dir. Let the kernel take care of binding gymnastics.
-
+An image (more specifically the rootfs of an operating system) is needed to construct a container.<br/>
+The building environment should be as follows,
+```
+concon
+├── base
+├── merged
+├── upper
+└── work
+```
 ```bash
 mkdir -p concon/{base,upper,work,merged}
+```
+
+
+The rootfs should be in a folder as `base` whose siblings are `upper`, `work`, and `merged`.
+- `base` is immutable right after getting a filesystem inside of it.
+- `upper` reflects changes.
+- `merge` merges the upper as top, base as lower, and present as one.
+- Applications write to `merged` (the mountpoint).
+The kernel intercepts the write, performs copy-up (from lower to upper if needed), then applies the write to upper.
+- `work` is an internal kernel scratch area for atomic copy-up. it writes a temp file in workdir, then renames it into upperdir for atomicity.
+```bash
 cd concon
 podman pull docker.io/almalinux/10-init
 ```
@@ -58,8 +66,8 @@ Now, take `alma.tar.gz` and extract it to the `base` dir
 tar -xzf alma.tar.gz -C base
 ```
 
-It unzips the tar.gz and extracts it to base dir (more specifically changes path to base before extraction).
-Add `v` after `z` or `x` for verbose mode.
+It extracts the `tar.gz` to base dir (more specifically changes path to base before extraction).
+Add `-v` for verbose mode.
 
 ```bash
 tree -L base
@@ -77,13 +85,21 @@ base
 └── repositories
 ```
 
-It should show the rootfs of the container but it doesn't. It is because we extracted a container image pulled by podman.
+It should show the rootfs of the container but it doesn't.
+The extracted content of the container image is pulled by podman
+which not just holds the rootfs but,
+does the required files and folders
+in a standard directories that satisfies the OCI-Standard.
 
-Container images are created by stacking one layer on another but, here alma has a single layer because almalinux squashed the image into a single layer before building it into an image.
+Container images are created by
+stacking one layer on another
+but, here alma has a single layer
+because almalinux squashed all layers
+into a single layer.
 
 When creating container images, following the same practice as alma is recommended.
 
-Now, let's move the contents of the base to a different dir as `x-image` and extract the filesystem of almalinux from the extracted alma's dir (`x-image`'s tar file) to base.
+Now, let's move the contents of the `base` to a different dir as `x-image` and extract the filesystem of almalinux from the `x-image`'s contents to `base`.
 
 ```bash
 mv base x-image && \
@@ -96,9 +112,11 @@ afs  bin  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  sr
 
 Now it can be used to mount as an overlayfs to costruct the container environment.<br/>
 OverlayFS is a linux union mount filesystem that can present a single merged directory by layering a lower directory and an upper directory.
-Container base layer is immutable, therefor readonly. It is required to construct a container in this manner.
+Container base layer is immutable, therefor readonly.
+Upper directory is where all changes reflected but
+writing directly there would conflict with overlay's philosophies,
+therefore write on `merged` which the kernel takes, stages on `work`, and then atomically does to `upper`.
 
-The merge directory will be what the programs inside the container interacts with. More specifically work is what, the kernel takes it, and adds it to `upper` dir.
 
 Create the filesystem of the container by mounting files as an overlayfs as follows,
 
@@ -176,7 +194,7 @@ ip -br link | awk '{print $1}'
 ```
 ```
 lo
-wlp3s0
+eth0
 virbr0
 ```
 
@@ -191,10 +209,55 @@ ip -br link | awk '{print $1}'
 
 ```
 lo
-wlp3s0
+eth0
 virbr0
 veth0-guest@veth0
 veth0@veth0-guest
 ```
 
 the first one is self and the other is peer divided by `@`. Basically veth0-guest is peer to veth0 and vice versa the otherway also.
+
+To give the new namespace an internet connection, the veth0 in host has to be binded with the veth0-guest inside of the namespace.
+It would be roughly as follows,
+
+
+<LayerCard class="gap-10 p-10">
+<LayerCardHeader>
+</LayerCardHeader>
+<img src="/img/c.svg"/>
+Look. Both the container (new namespace) and host has identical ethernet but the ethernet of the new ns is binded with a virtual eth of host and the veth0 gets its connection from host's eth0.
+</LayerCard>
+
+To get this, a custom configuration in both side is required, so we can just omit it by not unsharing the `--net`. The new namespace would share host connection directly.
+
+```bash
+exit # to exit from current namespace (to host)
+```
+```bash
+sudo unshare \
+--pid         \
+--uts          \
+--ipc           \
+`# --net`        \
+--mount           \
+--fork             \
+chroot merged /bin/bash
+```
+
+```bash
+dnf install nginx -y
+```
+
+```
+AlmaLinux 10 - AppStream                                                           473 kB/s | 2.6 MB     00:05
+AlmaLinux 10 - BaseOS                                                              1.2 MB/s |  37 MB     00:30
+AlmaLinux 10 - CRB                                                                  84 kB/s | 615 kB     00:07
+AlmaLinux 10 - Extras                                                              4.7 kB/s |  13 kB     00:02
+Package nginx-2:1.26.3-6.el10_2.7.x86_64 is already installed.
+Dependencies resolved.
+Nothing to do.
+Complete!
+```
+
+
+With this understanding of container internals, you can now selectively expose or restrict access, depending on whether  what requires is integration or isolation.
