@@ -53,7 +53,7 @@ docker.io/almalinux/10-init  latest      defe64aa76a6  3 weeks ago  595 MB
 ```
 
 ```bash
-podman save defe64 | gzip > alma.tar.gz
+podman save docker.io/almalinux/10-init | gzip > alma.tar.gz
 ls
 ```
 ```
@@ -70,7 +70,7 @@ It extracts the `tar.gz` to base dir (more specifically changes path to base bef
 Add `-v` for verbose mode.
 
 ```bash
-tree -L base
+tree -L 3 base
 ```
 
 ```
@@ -102,8 +102,9 @@ When creating container images, following the same practice as alma is recommend
 Now, let's move the contents of the `base` to a different dir as `x-image` and extract the filesystem of almalinux from the `x-image`'s contents to `base`.
 
 ```bash
-mv base x-image && \
-mkdir base && \
+mv base x-image
+mkdir base
+tar -xf x-image/*.tar -C base
 ls base
 ```
 ```
